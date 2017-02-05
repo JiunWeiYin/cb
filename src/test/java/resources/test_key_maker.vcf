@@ -1,0 +1,49 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##fileDate=20160226
+##reference=none
+##source=anome
+##ALT=<ID=INS:ME:ALU,Description="Insertion of ALU element">
+##ALT=<ID=INV,Description="Inversion">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End coordinate of this variant">
+##INFO=<ID=ANS,Number=1,Type=String,Description="Normalized variant">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+2	1	.	.	.	100	PASS	END=3;ANS=02_1_3,.,.
+2	1	.	-	-	100	PASS	ANS=02_1_1,-,-
+2	1	.	NT	@@@	100	PASS	ANS=02_1_2,NT,@@@
+2	2	.	*	*	100	PASS	ANS=02_2_2,*,*
+
+2	1	.	.	-	100	PASS	ANS=02_1_1,.,-
+2	1	.	-	.	100	PASS	ANS=02_1_1,-,.
+
+2	1	.		ccp	100	PASS	ANS=02_0_1,-,ccp
+2	1	.	ccp		100	PASS	ANS=02_1_3,ccp,-
+
+2	1	.	.	N	100	PASS	ANS=02_0_1,-,N
+2	1	.	.	A	100	PASS	ANS=02_0_1,-,A
+2	1	.	.	AA	100	PASS	ANS=02_0_1,-,AA
+2	1	.	-	A	100	PASS	ANS=02_1_1,-,A
+2	1	.	-	AA	100	PASS	ANS=02_1_1,-,AA
+
+2	1	.	A	.	100	PASS	ANS=02_1_A,A,A
+2	1	.	AA	.	100	PASS	ANS=02_1_2,AA,AA
+2	1	.	A	-	100	PASS	ANS=02_1_1,A,-
+2	1	.	AA	-	100	PASS	ANS=02_1_2,AA,-
+
+2	1	.	A	A	100	PASS	ANS=02_1_A,A,A
+2	1	.	A	G	100	PASS	ANS=02_1_G,A,G
+2	1	.	AA	GG	100	PASS	ANS=02_1_2,AA,GG
+
+2	1	.	A	ATC	100	PASS	ANS=02_1_2,-,TC
+2	1	.	AT	ATC	100	PASS	ANS=02_2_3,-,C
+2	1	.	AA	ATC	100	PASS	ANS=02_2_2,A,TC
+
+2	1	.	ATC	A	100	PASS	ANS=02_2_3,TC,-
+2	1	.	ATC	AA	100	PASS	ANS=02_2_3,TC,A
+
+2	1	.	ATC	CTG	100	PASS	ANS=02_1_3,ATC,CTG
+
+2	1	.	A	<INV>	100	PASS	END=3;ANS=02_1_3,A,<INV>
+2	1	.	A	A<INV>	100	PASS	END=3;ANS=02_1_3,A,A<INV>
+2	1	.	A	G<INS:ME:ALU>	100	PASS	END=3;ANS=02_1_3,A,G<INS:ME:ALU>
+2	1	.	A	G]17:198982]	100	PASS	END=3;ANS=02_1_3,A,G]17:198982]
