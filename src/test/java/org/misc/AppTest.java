@@ -1,4 +1,4 @@
-package org.try.misc;
+package org.misc;
 
 public class AppTest {
 }
