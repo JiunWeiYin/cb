@@ -1,4 +1,4 @@
-package org;
+package org.try.misc;
 
 public class App {
 
