@@ -1,6 +1,7 @@
 
 # url showing daily bond transcations
-urlBondDaily: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.96324200%201486284133
+#urlBondDaily: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.96324200%201486284133
+urlBondDaily: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.96324200%201486284133/
 
 # descipriton of all bonds, including expired date
 urlBondPublish: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.txt
