@@ -38,4 +38,14 @@ public class AppsTest {
         Configuration conf = Apps.getConfiguration();
         assertEquals("http://www.tpex.org.tw/storage/bond_publish/ISSBD5.txt", conf.geturlBondPublish());
     }
+
+
+
+
+
+
+
+
+
+
 }
