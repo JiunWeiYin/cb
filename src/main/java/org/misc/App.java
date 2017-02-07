@@ -16,9 +16,8 @@ public class App {
         if (resp.statusCode() == 200) {
             Document doc = conn.get();
             Elements tables = doc.select("table"); //select the first table.
-            System.out.printf("tables.size(): %s %n", tables.size());
 
-            for(Element t : tables) {
+            for (Element t : tables) {
                 if (t.hasClass(YUI_TEXT_LEFT)) {
                     System.out.println(t);
                 }
