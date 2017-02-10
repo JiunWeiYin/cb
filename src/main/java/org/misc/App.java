@@ -18,15 +18,15 @@ public class App {
 
         // set configuration
         Configuration config = Apps.getConfiguration();
-        LOGGER.debug(String.format("The configuration is ready."));
+        LOGGER.debug("The configuration is ready.");
 
         // setup connection
         Connection conn = Apps.getConnection(config.getUrlBondDaily(), USER_AGENT, REFERRER, TIME_OUT);
-        LOGGER.debug(String.format("The connection is ready."));
+        LOGGER.debug("The connection is ready.");
 
         // execute connection
         Connection.Response resp = conn.execute();
-        LOGGER.debug(String.format("The connection has been tested."));
+        LOGGER.debug("The connection has been tested.");
 
         // get connection response status code
         if (resp.statusCode() != 200) {
@@ -38,7 +38,7 @@ public class App {
 
         // convert HTML to doc
         Document doc = conn.get();
-        LOGGER.debug(String.format("The HTML has been converted as a Document object."));
+        LOGGER.debug("The HTML has been converted as a Document object.");
 
         // select all tables
         Elements tables = doc.select(TABLE); // get all tables
