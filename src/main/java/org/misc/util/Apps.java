@@ -1,3 +1,8 @@
+/**
+ * Author: Chun-Pei Cheng
+ * Contact: ccp0625@gmail.com
+ */
+
 package org.misc.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -113,4 +118,16 @@ public class Apps {
         String val = elements.get(FEATURE.valueOf(feature).ordinal()).text();
         return val.equals(PLACEHOLDER) ? Float.MIN_VALUE : Float.parseFloat(val);
     }
+
+    /**
+     * Gets value as an int format.
+     *
+     * @return int
+     */
+    public static int getValueAsInt(Elements elements, String feature) {
+        String val = elements.get(FEATURE.valueOf(feature).ordinal()).text();
+        return val.equals(PLACEHOLDER) ? Integer.MIN_VALUE : Integer.parseInt(val.replace(",", ""));
+    }
+
+
 }

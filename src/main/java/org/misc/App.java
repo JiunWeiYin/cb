@@ -1,3 +1,8 @@
+/**
+ * Author: Chun-Pei Cheng
+ * Contact: ccp0625@gmail.com
+ */
+
 package org.misc;
 
 import org.apache.log4j.Logger;
@@ -83,53 +88,42 @@ public class App {
         // get the first index of <td>
         int idxRecord = Apps.indexOfRecord(tr, TD);
         LOGGER.debug(String.format("The first index of <%s> is %s.", TD, idxRecord));
-//        for (int i = idxRecord; i < tr.size(); i++) {
-//            System.out.printf("%s%n", tr.get(i));
-//        }
+        for (int i = idxRecord; i < tr.size(); i++) {
+            System.out.printf("i%s\t%n", i);
 
-        System.out.printf("%s%n%n%n%n", tr.get(1).select(TD));
+            Elements td = tr.get(i).select(TD);
 
-        Elements td = tr.get(FEATURE.valueOf(BOND).ordinal()).select(TD);
+            String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR);
+            String bondId = bond[0]; // eg. 12581 or 49581E
+            String bondName = bond[1]; // eg. 其祥一KY
 
-        String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR);
-        int bondId = Integer.parseInt(bond[0]); // eg. 12581
-        String bondName = bond[1]; // eg. 其祥一KY
+            String time = Apps.getValueAsString(td, TIME); // eg. 10:12
+            float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE); // eg. 108.5
+            float bidPrice = Apps.getValueAsFloat(td, BID_PRICE); // eg. 107.6
+            float offerPrice = Apps.getValueAsFloat(td, OFFER_PRICE); // eg. 108.5
+            String dailyPricing = Apps.getValueAsString(td, DAILY_PRICING); // eg. △1.30
+            int boardLot = Apps.getValueAsInt(td, BOARD_LOT); // eg. 0.0
+            float ydayClosingPrice = Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE); // eg. 108.5
+            float openingPrice = Apps.getValueAsFloat(td, OPENING_PRICE); // eg. 0.0
+            float dayHigh = Apps.getValueAsFloat(td, DAY_HIGH); // eg. 108.5
+            float dayLow = Apps.getValueAsFloat(td, DAY_LOW); // eg. 108.5
 
-        String time = Apps.getValueAsString(td, TIME); // eg. 10:12
-        float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE); // eg. 108.5
-        float bidPrice = Apps.getValueAsFloat(td, BID_PRICE); // eg. 107.6
-        float offerPrice = Apps.getValueAsFloat(td, OFFER_PRICE); // eg. 108.5
-        float dailyPricing = Apps.getValueAsFloat(td, DAILY_PRICING); // eg. 0.0
-        float boardLot = Apps.getValueAsFloat(td, BOARD_LOT); // eg. 0.0
-        float ydayClosingPrice = Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE); // eg. 108.5
-        float openingPrice = Apps.getValueAsFloat(td, OPENING_PRICE); // eg. 0.0
-        float dayHigh = Apps.getValueAsFloat(td, DAY_HIGH); // eg. 108.5
-        float dayLow = Apps.getValueAsFloat(td, DAY_LOW); // eg. 108.5
-
-        System.out.printf("bondId\t%s%n", bondId);
-        System.out.printf("bondName\t%s%n", bondName);
-        System.out.printf("time\t%s%n", time);
-        System.out.printf("closingPrice\t%s%n", closingPrice);
-        System.out.printf("bidPrice\t%s%n", bidPrice);
-        System.out.printf("offerPrice\t%s%n", offerPrice);
-        System.out.printf("dailyPricing\t%s%n", dailyPricing);
-        System.out.printf("boardLot\t%s%n", boardLot);
-        System.out.printf("ydayClosingPrice\t%s%n", ydayClosingPrice);
-        System.out.printf("openingPrice\t%s%n", openingPrice);
-        System.out.printf("dayHigh\t%s%n", dayHigh);
-        System.out.printf("dayLow\t%s%n", dayLow);
+            System.out.printf("bondId\t%s%n", bondId);
+            System.out.printf("bondName\t%s%n", bondName);
+            System.out.printf("time\t%s%n", time);
+            System.out.printf("closingPrice\t%s%n", closingPrice);
+            System.out.printf("bidPrice\t%s%n", bidPrice);
+            System.out.printf("offerPrice\t%s%n", offerPrice);
+            System.out.printf("dailyPricing\t%s%n", dailyPricing);
+            System.out.printf("boardLot\t%s%n", boardLot);
+            System.out.printf("ydayClosingPrice\t%s%n", ydayClosingPrice);
+            System.out.printf("openingPrice\t%s%n", openingPrice);
+            System.out.printf("dayHigh\t%s%n", dayHigh);
+            System.out.printf("dayLow\t%s%n%n", dayLow);
+        }
 
 
-        //
-
-
-
-
-
-
-
-
-
+        LOGGER.info("This program has been completed successfully.");
     }
 
 

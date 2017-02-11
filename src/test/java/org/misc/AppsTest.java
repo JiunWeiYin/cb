@@ -1,3 +1,8 @@
+/**
+ * Author: Chun-Pei Cheng
+ * Contact: ccp0625@gmail.com
+ */
+
 package org.misc;
 
 import org.apache.log4j.Level;
