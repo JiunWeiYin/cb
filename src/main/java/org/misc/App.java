@@ -44,7 +44,7 @@ public class App {
         // select all <table>
         Elements tables = doc.select(TABLE);
         if (tables.size() <= 0) {
-            LOGGER.debug(String.format("<%s> was not found.", TABLE));
+            LOGGER.error(String.format("<%s> was not found.", TABLE));
             return;
         }
         LOGGER.info(String.format("Got all <%s>.", TABLE));
@@ -52,7 +52,7 @@ public class App {
         // get a specific <table>
         Element table = Apps.searchTable(tables, CLASS, YUI_TEXT_LEFT);
         if (table == null) {
-            LOGGER.debug(String.format("<%s %s=%s> was not found.", TABLE, CLASS, YUI_TEXT_LEFT));
+            LOGGER.error(String.format("<%s %s=%s> was not found.", TABLE, CLASS, YUI_TEXT_LEFT));
             return;
         }
         LOGGER.info(String.format("Got the <%s %s=%s>.", TABLE, CLASS, YUI_TEXT_LEFT));
@@ -60,7 +60,7 @@ public class App {
         // get a specific <table>
         table = Apps.searchTable(table.select(TABLE), BGCOLOR, BGCOLOR_VALUE);
         if (table == null) {
-            LOGGER.debug(String.format("<%s %s=%s> was not found.", TABLE, BGCOLOR, BGCOLOR_VALUE));
+            LOGGER.error(String.format("<%s %s=%s> was not found.", TABLE, BGCOLOR, BGCOLOR_VALUE));
             return;
         }
         LOGGER.info(String.format("Got the <%s %s=%s>.", TABLE, BGCOLOR, BGCOLOR_VALUE));
@@ -73,27 +73,20 @@ public class App {
         }
         LOGGER.info(String.format("Got the <%s>.", TR));
 
-        // get all <td>
-        if (tr.select(TD).isEmpty()) {
+        // check if <td> is present
+        Elements td = tr.select(TD);
+        if (td.isEmpty()) {
             LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TD, urlBondDaily));
             return;
         }
         LOGGER.info(String.format("Got the <%s>.", TD));
 
+        System.out.printf("%s%n", tr.get(0));
 
-//        int firstRecordIdx = Apps.getFirstRecordIndex(tr, TR);
-
-//
-//
-//
-//        for (int i = 1; i < tr.size(); i++) {
-//            System.out.printf("%s%n", tr.get(i));
-//        }
-
-
-
-
-
+        for (int i = tr.indexOf(td); i < tr.size(); i++) {
+            System.out.printf("%s%n", i);
+            System.out.printf("%s%n", tr.get(i));
+        }
 
 
 

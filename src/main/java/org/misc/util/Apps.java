@@ -48,7 +48,9 @@ public class Apps {
     }
 
     /**
-     * @return
+     * Looks for an element with the specified features.
+     *
+     * @return an element
      */
     public static Element searchTable(Elements elements, String attribute, String value) {
         Element element = null;
@@ -79,18 +81,5 @@ public class Apps {
         return element;
 
     }
-
-
-    public static int indexOf(Elements elements, String tag) {
-        for (int i = 0; i < elements.size(); i++) {
-            if (elements.select(tag).size() > 0) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-
 
 }
