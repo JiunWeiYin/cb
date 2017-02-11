@@ -18,15 +18,15 @@ public class App {
 
         // set configuration
         Configuration config = Apps.getConfiguration();
-        LOGGER.debug("The configuration is ready.");
+        LOGGER.info("The configuration is ready.");
 
         // setup connection
         Connection conn = Apps.getConnection(config.getUrlBondDaily(), USER_AGENT, REFERRER, TIME_OUT);
-        LOGGER.debug("The connection is ready.");
+        LOGGER.info("The connection is ready.");
 
         // execute connection
         Connection.Response resp = conn.execute();
-        LOGGER.debug("The connection has been tested.");
+        LOGGER.info("The connection has been tested.");
 
         // get connection response status code
         if (resp.statusCode() != 200) {
@@ -34,11 +34,11 @@ public class App {
                     "Please check if the internet is working.", resp.statusCode()));
             return;
         }
-        LOGGER.error(String.format("The connection response status code is %s. %n", resp.statusCode()));
+        LOGGER.info(String.format("The connection response status code is %s. %n", resp.statusCode()));
 
         // convert HTML to doc
         Document doc = conn.get();
-        LOGGER.debug("The HTML has been converted as a Document object.");
+        LOGGER.info("The HTML has been converted as a Document object.");
 
         // select all tables
         Elements tables = doc.select(TABLE); // get all tables
@@ -46,7 +46,7 @@ public class App {
             LOGGER.debug(String.format("<%s> was not found.", TABLE));
             return;
         }
-        LOGGER.debug(String.format("Got all <%s>.", TABLE));
+        LOGGER.info(String.format("Got all <%s>.", TABLE));
 
         // get a specific table
         Element table = Apps.searchTable(tables, CLASS, YUI_TEXT_LEFT);
@@ -54,7 +54,7 @@ public class App {
             LOGGER.debug(String.format("<%s %s=%s> was not found.", TABLE, CLASS, YUI_TEXT_LEFT));
             return;
         }
-        LOGGER.debug(String.format("Got the <%s %s=%s>.", TABLE, CLASS, YUI_TEXT_LEFT));
+        LOGGER.info(String.format("Got the <%s %s=%s>.", TABLE, CLASS, YUI_TEXT_LEFT));
 
         // get a specific table
         table = Apps.searchTable(table.select(TABLE), BGCOLOR, BGCOLOR_VALUE);
@@ -62,7 +62,13 @@ public class App {
             LOGGER.debug(String.format("<%s %s=%s> was not found.", TABLE, BGCOLOR, BGCOLOR_VALUE));
             return;
         }
-        LOGGER.debug(String.format("Got the <%s %s=%s>.", TABLE, BGCOLOR, BGCOLOR_VALUE));
+        LOGGER.info(String.format("Got the <%s %s=%s>.", TABLE, BGCOLOR, BGCOLOR_VALUE));
+
+
+
+
+
+
 
 
         System.out.printf("table: %s%n", table);
