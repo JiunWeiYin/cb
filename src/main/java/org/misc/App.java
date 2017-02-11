@@ -21,8 +21,9 @@ public class App {
         LOGGER.info("The configuration is ready.");
 
         // setup connection
-        Connection conn = Apps.getConnection(config.getUrlBondDaily(), USER_AGENT, REFERRER, TIME_OUT);
-        LOGGER.info("The connection is ready.");
+        String urlBondDaily = config.getUrlBondDaily();
+        Connection conn = Apps.getConnection(urlBondDaily, USER_AGENT, REFERRER, TIME_OUT);
+        LOGGER.info(String.format("Connected to %s.", urlBondDaily));
 
         // execute connection
         Connection.Response resp = conn.execute();
@@ -40,7 +41,7 @@ public class App {
         Document doc = conn.get();
         LOGGER.info("The HTML has been converted as a Document object.");
 
-        // select all tables
+        // select all <table>
         Elements tables = doc.select(TABLE);
         if (tables.size() <= 0) {
             LOGGER.debug(String.format("<%s> was not found.", TABLE));
@@ -48,7 +49,7 @@ public class App {
         }
         LOGGER.info(String.format("Got all <%s>.", TABLE));
 
-        // get a specific table
+        // get a specific <table>
         Element table = Apps.searchTable(tables, CLASS, YUI_TEXT_LEFT);
         if (table == null) {
             LOGGER.debug(String.format("<%s %s=%s> was not found.", TABLE, CLASS, YUI_TEXT_LEFT));
@@ -56,7 +57,7 @@ public class App {
         }
         LOGGER.info(String.format("Got the <%s %s=%s>.", TABLE, CLASS, YUI_TEXT_LEFT));
 
-        // get a specific table
+        // get a specific <table>
         table = Apps.searchTable(table.select(TABLE), BGCOLOR, BGCOLOR_VALUE);
         if (table == null) {
             LOGGER.debug(String.format("<%s %s=%s> was not found.", TABLE, BGCOLOR, BGCOLOR_VALUE));
@@ -64,14 +65,35 @@ public class App {
         }
         LOGGER.info(String.format("Got the <%s %s=%s>.", TABLE, BGCOLOR, BGCOLOR_VALUE));
 
+        // get all <tr>
+        Elements tr = table.select(TR);
+        if (tr.isEmpty()) {
+            LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TR, urlBondDaily));
+            return;
+        }
+        LOGGER.info(String.format("Got the <%s>.", TR));
+
+        // get all <td>
+        if (tr.select(TD).isEmpty()) {
+            LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TD, urlBondDaily));
+            return;
+        }
+        LOGGER.info(String.format("Got the <%s>.", TD));
+
+
+//        int firstRecordIdx = Apps.getFirstRecordIndex(tr, TR);
+
+//
+//
+//
+//        for (int i = 1; i < tr.size(); i++) {
+//            System.out.printf("%s%n", tr.get(i));
+//        }
 
 
 
 
 
-
-
-        System.out.printf("table: %s%n", table);
 
 
 

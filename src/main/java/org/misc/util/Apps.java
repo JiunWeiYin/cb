@@ -76,10 +76,21 @@ public class Apps {
 
         }
 
-
         return element;
 
     }
+
+
+    public static int indexOf(Elements elements, String tag) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements.select(tag).size() > 0) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
 
 
 }
