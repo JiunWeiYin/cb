@@ -106,9 +106,31 @@ public class App {
         float dayHigh = Apps.getValueAsFloat(td, DAY_HIGH); // eg. 108.5
         float dayLow = Apps.getValueAsFloat(td, DAY_LOW); // eg. 108.5
 
+        System.out.printf("bondId\t%s%n", bondId);
+        System.out.printf("bondName\t%s%n", bondName);
+        System.out.printf("time\t%s%n", time);
+        System.out.printf("closingPrice\t%s%n", closingPrice);
+        System.out.printf("bidPrice\t%s%n", bidPrice);
+        System.out.printf("offerPrice\t%s%n", offerPrice);
+        System.out.printf("dailyPricing\t%s%n", dailyPricing);
+        System.out.printf("boardLot\t%s%n", boardLot);
+        System.out.printf("ydayClosingPrice\t%s%n", ydayClosingPrice);
+        System.out.printf("openingPrice\t%s%n", openingPrice);
+        System.out.printf("dayHigh\t%s%n", dayHigh);
+        System.out.printf("dayLow\t%s%n", dayLow);
+
+
+        //
+
+
+
+
+
+
 
 
 
     }
+
 
 }
