@@ -41,7 +41,7 @@ public class App {
         LOGGER.info("The HTML has been converted as a Document object.");
 
         // select all tables
-        Elements tables = doc.select(TABLE); // get all tables
+        Elements tables = doc.select(TABLE);
         if (tables.size() <= 0) {
             LOGGER.debug(String.format("<%s> was not found.", TABLE));
             return;
