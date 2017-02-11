@@ -89,7 +89,7 @@ public class App {
         int idxRecord = Apps.indexOfRecord(tr, TD);
         LOGGER.debug(String.format("The first index of <%s> is %s.", TD, idxRecord));
         for (int i = idxRecord; i < tr.size(); i++) {
-            System.out.printf("i%s\t%n", i);
+            System.out.printf("# record:%s%n", i);
 
             Elements td = tr.get(i).select(TD);
 
