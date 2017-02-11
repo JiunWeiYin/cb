@@ -13,8 +13,7 @@ import org.misc.ConstVar;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.misc.ConstVar.BGCOLOR;
-import static org.misc.ConstVar.CLASS;
+import static org.misc.ConstVar.*;
 
 public class Apps {
     private static final Logger LOGGER = Logger.getLogger(Apps.class);
@@ -22,7 +21,7 @@ public class Apps {
     /**
      * Loads YAML configurations.
      *
-     * @return a Configuration instance
+     * @return Configuration
      */
     public static Configuration getConfiguration() throws IOException {
         Configuration config;
@@ -41,7 +40,7 @@ public class Apps {
     /**
      * Setup a connection to daily transaction.
      *
-     * @return a Connection instance
+     * @return Connection
      */
     public static Connection getConnection(String url, String userAgent, String referrer, int timeOut) {
         return Jsoup.connect(url).userAgent(userAgent).referrer(referrer).timeout(timeOut);
@@ -50,7 +49,7 @@ public class Apps {
     /**
      * Looks for an element with the specified features.
      *
-     * @return an element
+     * @return Element
      */
     public static Element searchTable(Elements elements, String attribute, String value) {
         Element element = null;
@@ -83,9 +82,9 @@ public class Apps {
     }
 
     /**
-     * get first index of the specified tag.
+     * Gets the first index of the specified tag.
      *
-     * @return index
+     * @return int
      */
     public static int indexOfRecord(Elements elements, String tag) {
         for (int i = 0; i < elements.size(); i++) {
@@ -96,6 +95,22 @@ public class Apps {
         return -1;
     }
 
+    /**
+     * Gets value as a String format.
+     *
+     * @return String
+     */
+    public static String getValueAsString(Elements elements, String feature) {
+        return elements.get(FEATURE.valueOf(feature).ordinal()).text();
+    }
 
-
+    /**
+     * Gets value as a float format.
+     *
+     * @return float
+     */
+    public static float getValueAsFloat(Elements elements, String feature) {
+        String val = elements.get(FEATURE.valueOf(feature).ordinal()).text();
+        return val.equals(PLACEHOLDER) ? Float.MIN_VALUE : Float.parseFloat(val);
+    }
 }
