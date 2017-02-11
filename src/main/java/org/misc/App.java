@@ -14,7 +14,6 @@ import static org.misc.ConstVar.*;
 public class App {
     private static final Logger LOGGER = Logger.getLogger(App.class);
 
-    ////////
     public static void main(String[] args) throws IOException {
 
         // set configuration
@@ -75,17 +74,16 @@ public class App {
         LOGGER.info(String.format("Got the <%s>.", TR));
 
         // check if <td> is present
-        Elements td = tr.select(TD);
-        if (td.isEmpty()) {
+        if (tr.select(TD).isEmpty()) {
             LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TD, urlBondDaily));
             return;
         }
         LOGGER.info(String.format("Got the <%s>.", TD));
 
-        System.out.printf("%s%n", tr.get(0));
-
-        for (int i = tr.indexOf(td); i < tr.size(); i++) {
-            System.out.printf("%s%n", i);
+        // get the first index of <td>
+        int idxRecord = Apps.indexOfRecord(tr, TD);
+        LOGGER.debug(String.format("The first index of <%s> is %s.", TD, idxRecord));
+        for (int i = idxRecord; i < tr.size(); i++) {
             System.out.printf("%s%n", tr.get(i));
         }
 

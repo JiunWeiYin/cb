@@ -82,4 +82,20 @@ public class Apps {
 
     }
 
+    /**
+     * get first index of the specified tag.
+     *
+     * @return index
+     */
+    public static int indexOfRecord(Elements elements, String tag) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (!elements.get(i).select(tag).isEmpty()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+
 }
