@@ -15,8 +15,11 @@ import org.jsoup.select.Elements;
 import org.misc.Configuration;
 import org.misc.ConstVar;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 import static org.misc.ConstVar.*;
 
@@ -128,6 +131,20 @@ public class Apps {
         String val = elements.get(FEATURE.valueOf(feature).ordinal()).text();
         return val.equals(PLACEHOLDER) ? Integer.MIN_VALUE : Integer.parseInt(val.replace(",", ""));
     }
+
+    /**
+     * Read text file.
+     *
+     * @return BufferedReader
+     */
+    public static BufferedReader readFileAsBufferedReader(String url) throws IOException {
+        return new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+    }
+
+
+
+
+
 
 
 }

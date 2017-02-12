@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.misc.util.Apps;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 import static org.misc.ConstVar.*;
@@ -89,8 +90,6 @@ public class App {
         int idxRecord = Apps.indexOfRecord(tr, TD);
         LOGGER.debug(String.format("The first index of <%s> is %s.", TD, idxRecord));
         for (int i = idxRecord; i < tr.size(); i++) {
-            System.out.printf("# record:%s%n", i);
-
             Elements td = tr.get(i).select(TD);
 
             String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR);
@@ -108,19 +107,43 @@ public class App {
             float dayHigh = Apps.getValueAsFloat(td, DAY_HIGH); // eg. 108.5
             float dayLow = Apps.getValueAsFloat(td, DAY_LOW); // eg. 108.5
 
-            System.out.printf("bondId\t%s%n", bondId);
-            System.out.printf("bondName\t%s%n", bondName);
-            System.out.printf("time\t%s%n", time);
-            System.out.printf("closingPrice\t%s%n", closingPrice);
-            System.out.printf("bidPrice\t%s%n", bidPrice);
-            System.out.printf("offerPrice\t%s%n", offerPrice);
-            System.out.printf("dailyPricing\t%s%n", dailyPricing);
-            System.out.printf("boardLot\t%s%n", boardLot);
-            System.out.printf("ydayClosingPrice\t%s%n", ydayClosingPrice);
-            System.out.printf("openingPrice\t%s%n", openingPrice);
-            System.out.printf("dayHigh\t%s%n", dayHigh);
-            System.out.printf("dayLow\t%s%n%n", dayLow);
+//            System.out.printf("# record:%s%n", i);
+//            System.out.printf("bondId\t%s%n", bondId);
+//            System.out.printf("bondName\t%s%n", bondName);
+//            System.out.printf("time\t%s%n", time);
+//            System.out.printf("closingPrice\t%s%n", closingPrice);
+//            System.out.printf("bidPrice\t%s%n", bidPrice);
+//            System.out.printf("offerPrice\t%s%n", offerPrice);
+//            System.out.printf("dailyPricing\t%s%n", dailyPricing);
+//            System.out.printf("boardLot\t%s%n", boardLot);
+//            System.out.printf("ydayClosingPrice\t%s%n", ydayClosingPrice);
+//            System.out.printf("openingPrice\t%s%n", openingPrice);
+//            System.out.printf("dayHigh\t%s%n", dayHigh);
+//            System.out.printf("dayLow\t%s%n%n", dayLow);
         }
+
+
+        BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
+        String line = br.readLine(); // ISO-8859-5
+
+//        while ((line = br.readLine()) != null) {
+//
+//            System.out.printf("line    %s%n%n", line);
+//        }
+//        System.out.printf("%s%n%n", new String(line.getBytes("ISO-8859-5")));
+//        System.out.printf("%s%n%n", Arrays.toString(line.replace("\"", "").split(",")));
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         LOGGER.info("This program has been completed successfully.");
