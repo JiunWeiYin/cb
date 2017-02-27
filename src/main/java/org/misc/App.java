@@ -16,8 +16,8 @@ import org.misc.util.Bond;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.misc.ConstVar.*;
 
@@ -26,7 +26,7 @@ public class App {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
 
-        List<Bond> bonds = new ArrayList<>();
+        Map<String, Bond> bonds = new HashMap<>();
 
         // set configuration
         Configuration config = Apps.getConfiguration();
@@ -100,56 +100,46 @@ public class App {
 
             String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR_SPACE);
             String bondId = bond[0]; // eg. 12581 or 49581E
-            String bondName = bond[1]; // eg. 其祥一KY
-
-            String time = Apps.getValueAsString(td, TIME); // eg. 10:12
-            float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE); // eg. 108.5
-            float bidPrice = Apps.getValueAsFloat(td, BID_PRICE); // eg. 107.6
-            float offerPrice = Apps.getValueAsFloat(td, OFFER_PRICE); // eg. 108.5
-            String dailyPricing = Apps.getValueAsString(td, DAILY_PRICING); // eg. △1.30
-            int boardLot = Apps.getValueAsInt(td, BOARD_LOT); // eg. 0.0
-            float ydayClosingPrice = Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE); // eg. 108.5
-            float openingPrice = Apps.getValueAsFloat(td, OPENING_PRICE); // eg. 0.0
-            float dayHigh = Apps.getValueAsFloat(td, DAY_HIGH); // eg. 108.5
-            float dayLow = Apps.getValueAsFloat(td, DAY_LOW); // eg. 108.5
 
             Bond dBond = new Bond();
-            dBond.setBondId(bondId);
-            dBond.setBondName(bondName);
-            dBond.setTime(time);
-            dBond.setClosingPrice(closingPrice);
-            dBond.setBidPrice(bidPrice);
-            dBond.setOfferPrice(offerPrice);
-            dBond.setDailyPricing(dailyPricing);
-            dBond.setBoardLot(boardLot);
-            dBond.setYdayClosingPrice(ydayClosingPrice);
-            dBond.setOpeningPrice(openingPrice);
-            dBond.setDayHigh(dayHigh);
-            dBond.setDayLow(dayLow);
+            dBond.setBondName(bond[1]); // eg. 其祥一KY
+            dBond.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
+            dBond.setClosingPrice(Apps.getValueAsFloat(td, CLOSING_PRICE)); // eg. 108.5
+            dBond.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
+            dBond.setOfferPrice(Apps.getValueAsFloat(td, OFFER_PRICE)); // eg. 108.5
+            dBond.setDailyPricing(Apps.getValueAsString(td, DAILY_PRICING)); // eg. △1.30
+            dBond.setBoardLot(Apps.getValueAsInt(td, BOARD_LOT)); // eg. 0.0
+            dBond.setYdayClosingPrice(Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE)); // eg. 108.5
+            dBond.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
+            dBond.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
+            dBond.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
 
-            bonds.add(dBond);
-
-
-
+            bonds.put(bondId, dBond);
         }
-
 
         BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
-        String line = br.readLine(); // ISO-8859-5
+        String line = br.readLine();
 
-        while ((line = br.readLine()) != null) {
-            line = line.replace("\"", "");
+        while ((line = br.readLine().replace("\"", "").replace(" ", "")) != null) {
             String[] lineSplit = line.split(SEPERATOR_COMMA);
+            String bondId = lineSplit[2]; // eg. 12581 or 49581E
 
-            System.out.printf("%s%n", lineSplit[2]);
+            if (!bonds.containsKey(bondId)) {
+                LOGGER.warn(String.format("Bond ID '%s' cannot be found from daily bonds.", bondId));
+            } else {
+                LOGGER.debug(String.format("Bond ID '%s' was found in daily bonds.", bondId));
+
+                Bond idxBond = bonds.get(bondId);
+                idxBond.setRefund(REFUND); // eg. 100
+                final float roi = idxBond.getROI();
+                System.out.printf("ROI\t%s%n", roi);
+            }
+
+
         }
 
 
-        // * juniversalchardset
-
-
-
-        LOGGER.info("This program has been completed successfully.");
+        LOGGER.info("This program was running successfully.");
     }
 
 

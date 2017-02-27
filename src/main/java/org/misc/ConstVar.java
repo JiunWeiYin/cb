@@ -39,6 +39,10 @@ public class ConstVar {
     public static final String DAY_LOW = "dayLow";
     public static final String BIG5 = "big5";
 
+    public static final float REFUND = 100f;
+
+
+
     public enum FEATURE {
         choice,
         bond,

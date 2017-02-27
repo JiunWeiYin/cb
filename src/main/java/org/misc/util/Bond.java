@@ -1,7 +1,6 @@
 package org.misc.util;
 
 public class Bond {
-    String bondId;
     String bondName;
     String time;
     float closingPrice;
@@ -13,14 +12,9 @@ public class Bond {
     float openingPrice;
     float dayHigh;
     float dayLow;
+    float refund;
 
-    public String getBondId() {
-        return bondId;
-    }
 
-    public void setBondId(String bondId) {
-        this.bondId = bondId;
-    }
 
     public String getBondName() {
         return bondName;
@@ -110,9 +104,23 @@ public class Bond {
         this.dayLow = dayLow;
     }
 
+    public float getRefund() {
+        return refund;
+    }
+
+    public void setRefund(float refund) {
+        this.refund = refund;
+    }
+
+    /**
+     * get ROI (Return Of Investment)
+     */
+    public float getROI() {
+        return (refund - closingPrice) / closingPrice;
+    }
+
     public String toString() {
-        return "bondId: " + bondId +
-                "; bondName: " + bondName +
+        return "bondName: " + bondName +
                 "; time: " + time +
                 "; closingPrice: " + closingPrice +
                 "; bidPrice: " + bidPrice +
@@ -122,6 +130,8 @@ public class Bond {
                 "; ydayClosingPrice: " + ydayClosingPrice +
                 "; openingPrice: " + openingPrice +
                 "; dayHigh: " + dayHigh +
-                "; dayLow: " + dayLow;
+                "; dayLow: " + dayLow +
+                "; refund: " + refund
+                ;
     }
 }
