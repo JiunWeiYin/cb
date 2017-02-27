@@ -1,6 +1,6 @@
 package org.misc.util;
 
-public class Bond extends Object {
+public class Bond {
     String bondId;
     String bondName;
     String time;
