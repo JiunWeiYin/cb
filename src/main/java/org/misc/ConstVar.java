@@ -22,7 +22,8 @@ public class ConstVar {
     public static final String BGCOLOR = "bgcolor";
     public static final String BGCOLOR_VALUE = "#ffffff";
 
-    public static final String SEPERATOR = " ";
+    public static final String SEPERATOR_SPACE = " ";
+    public static final String SEPERATOR_COMMA = ",";
 
 
     public static final String BOND = "bond";
@@ -36,6 +37,7 @@ public class ConstVar {
     public static final String OPENING_PRICE = "openingPrice";
     public static final String DAY_HIGH = "dayHigh";
     public static final String DAY_LOW = "dayLow";
+    public static final String BIG5 = "big5";
 
     public enum FEATURE {
         choice,

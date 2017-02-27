@@ -11,16 +11,22 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.misc.util.Apps;
+import org.misc.util.Bond;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.misc.ConstVar.*;
 
 public class App {
     private static final Logger LOGGER = Logger.getLogger(App.class);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
+
+        List<Bond> bonds = new ArrayList<>();
 
         // set configuration
         Configuration config = Apps.getConfiguration();
@@ -92,7 +98,7 @@ public class App {
         for (int i = idxRecord; i < tr.size(); i++) {
             Elements td = tr.get(i).select(TD);
 
-            String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR);
+            String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR_SPACE);
             String bondId = bond[0]; // eg. 12581 or 49581E
             String bondName = bond[1]; // eg. 其祥一KY
 
@@ -107,42 +113,39 @@ public class App {
             float dayHigh = Apps.getValueAsFloat(td, DAY_HIGH); // eg. 108.5
             float dayLow = Apps.getValueAsFloat(td, DAY_LOW); // eg. 108.5
 
-//            System.out.printf("# record:%s%n", i);
-//            System.out.printf("bondId\t%s%n", bondId);
-//            System.out.printf("bondName\t%s%n", bondName);
-//            System.out.printf("time\t%s%n", time);
-//            System.out.printf("closingPrice\t%s%n", closingPrice);
-//            System.out.printf("bidPrice\t%s%n", bidPrice);
-//            System.out.printf("offerPrice\t%s%n", offerPrice);
-//            System.out.printf("dailyPricing\t%s%n", dailyPricing);
-//            System.out.printf("boardLot\t%s%n", boardLot);
-//            System.out.printf("ydayClosingPrice\t%s%n", ydayClosingPrice);
-//            System.out.printf("openingPrice\t%s%n", openingPrice);
-//            System.out.printf("dayHigh\t%s%n", dayHigh);
-//            System.out.printf("dayLow\t%s%n%n", dayLow);
+            Bond dBond = new Bond();
+            dBond.setBondId(bondId);
+            dBond.setBondName(bondName);
+            dBond.setTime(time);
+            dBond.setClosingPrice(closingPrice);
+            dBond.setBidPrice(bidPrice);
+            dBond.setOfferPrice(offerPrice);
+            dBond.setDailyPricing(dailyPricing);
+            dBond.setBoardLot(boardLot);
+            dBond.setYdayClosingPrice(ydayClosingPrice);
+            dBond.setOpeningPrice(openingPrice);
+            dBond.setDayHigh(dayHigh);
+            dBond.setDayLow(dayLow);
+
+            bonds.add(dBond);
+
+
+
         }
 
 
         BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
         String line = br.readLine(); // ISO-8859-5
 
-//        while ((line = br.readLine()) != null) {
-//
-//            System.out.printf("line    %s%n%n", line);
-//        }
-//        System.out.printf("%s%n%n", new String(line.getBytes("ISO-8859-5")));
-//        System.out.printf("%s%n%n", Arrays.toString(line.replace("\"", "").split(",")));
+        while ((line = br.readLine()) != null) {
+            line = line.replace("\"", "");
+            String[] lineSplit = line.split(SEPERATOR_COMMA);
+
+            System.out.printf("%s%n", lineSplit[2]);
+        }
 
 
-
-
-
-
-
-
-
-
-
+        // * juniversalchardset
 
 
 

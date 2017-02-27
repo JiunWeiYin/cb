@@ -138,12 +138,21 @@ public class Apps {
      * @return BufferedReader
      */
     public static BufferedReader readFileAsBufferedReader(String url) throws IOException {
-        InputStreamReader isr = new InputStreamReader(new URL(url).openStream());
+        InputStreamReader isr = new InputStreamReader(new URL(url).openStream(), BIG5);
         LOGGER.debug(String.format("The encoding type is %s.", isr.getEncoding()));
         return new BufferedReader(isr);
     }
 
-
+    /**
+     * Read text file.
+     *
+     * @return BufferedReader
+     */
+    public static BufferedReader readExcelAsBufferedReader(String url) throws IOException {
+        InputStreamReader isr = new InputStreamReader(new URL(url).openStream());
+        LOGGER.debug(String.format("The encoding type is %s.", isr.getEncoding()));
+        return new BufferedReader(isr);
+    }
 
 
 
