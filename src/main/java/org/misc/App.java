@@ -11,11 +11,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.misc.util.Apps;
-import org.misc.util.Bond;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ import static org.misc.ConstVar.*;
 public class App {
     private static final Logger LOGGER = Logger.getLogger(App.class);
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws Exception {
 
         Map<String, Bond> bonds = new HashMap<>();
 
@@ -113,12 +112,15 @@ public class App {
             dBond.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
             dBond.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
             dBond.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
+            dBond.setPresent(new Date()); // eg. 2017/02/28
 
             bonds.put(bondId, dBond);
         }
 
         BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
         String line = br.readLine();
+
+        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date");
 
         while ((line = br.readLine().replace("\"", "").replace(" ", "")) != null) {
             String[] lineSplit = line.split(SEPERATOR_COMMA);
@@ -128,11 +130,21 @@ public class App {
                 LOGGER.warn(String.format("Bond ID '%s' cannot be found from daily bonds.", bondId));
             } else {
                 LOGGER.debug(String.format("Bond ID '%s' was found in daily bonds.", bondId));
+                LOGGER.debug(line);
 
                 Bond idxBond = bonds.get(bondId);
-                idxBond.setRefund(REFUND); // eg. 100
-                final float roi = idxBond.getROI();
-                System.out.printf("ROI\t%s%n", roi);
+                SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
+                idxBond.setIssued(Apps.formatDate(lineSplit[6], formatter));
+                idxBond.setDue(Apps.formatDate(lineSplit[7], formatter));
+
+                final float roi = idxBond.getRoi();
+                final float roiOY = idxBond.getRoiOverYear();
+
+                System.out.printf("%s\t%s\t%s\t%s%n", bondId, idxBond.toLine(), roi, roiOY);
+
+                if (bondId.equals("36626")) {
+                    throw new Exception("hit 36626");
+                }
             }
 
 

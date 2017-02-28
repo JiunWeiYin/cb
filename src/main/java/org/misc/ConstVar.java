@@ -40,6 +40,9 @@ public class ConstVar {
     public static final String BIG5 = "big5";
 
     public static final float REFUND = 100f;
+    public static final String FORMATTER = "yyyyMMdd";
+    public static final String MY_FORMATTER = "yyyy/MM/dd";
+    public static final int DAYS_YEAR = 365;
 
 
 

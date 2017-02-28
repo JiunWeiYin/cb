@@ -15,6 +15,8 @@ import org.junit.runners.JUnit4;
 import org.misc.util.Apps;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,7 +26,7 @@ public class AppsTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        LOGGER.setLevel(Level.INFO);
+        LOGGER.setLevel(Level.DEBUG);
     }
 
     @AfterClass
@@ -45,7 +47,14 @@ public class AppsTest {
     }
 
 
-
+    @Test
+    public void testGetDays() throws ParseException {
+        String s1 = "20170227";
+        String s2 = "20170228";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        int days = Apps.getDays(formatter.parse(s1), formatter.parse(s2));
+        assertEquals(1, days);
+    }
 
 
 

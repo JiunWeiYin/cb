@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.misc.ConstVar.*;
 
@@ -144,18 +147,24 @@ public class Apps {
     }
 
     /**
-     * Read text file.
+     * Convert String to Date. eg. 2017/02/28
      *
-     * @return BufferedReader
+     * @return Date
      */
-    public static BufferedReader readExcelAsBufferedReader(String url) throws IOException {
-        InputStreamReader isr = new InputStreamReader(new URL(url).openStream());
-        LOGGER.debug(String.format("The encoding type is %s.", isr.getEncoding()));
-        return new BufferedReader(isr);
+    public static Date formatDate(String dateInString, SimpleDateFormat formatter) throws ParseException {
+        LOGGER.debug(String.format("The data-in-string is %s.", dateInString));
+        return formatter.parse(dateInString);
     }
 
-
-
-
+    /**
+     * get how many days.
+     *
+     * @return int
+     */
+    public static int getDays(Date start, Date end) {
+        LOGGER.debug(String.format("The start date is %s.", start));
+        LOGGER.debug(String.format("The end date %s.", end));
+        return (int) ((end.getTime() - start.getTime()) / (1000 * 24 * 60 * 60));
+    }
 
 }

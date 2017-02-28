@@ -1,6 +1,23 @@
-package org.misc.util;
+/**
+ * Author: Chun-Pei Cheng
+ * Contact: ccp0625@gmail.com
+ */
+
+package org.misc;
+
+import org.apache.log4j.Logger;
+import org.misc.util.Apps;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.misc.ConstVar.*;
 
 public class Bond {
+    private static final Logger LOGGER = Logger.getLogger(Bond.class);
+
+    // daily info
     String bondName;
     String time;
     float closingPrice;
@@ -12,7 +29,15 @@ public class Bond {
     float openingPrice;
     float dayHigh;
     float dayLow;
-    float refund;
+    Date present;
+
+    // publish info
+    float refund = REFUND;
+
+    Date due;
+    Date issued;
+
+
 
 
 
@@ -104,6 +129,14 @@ public class Bond {
         this.dayLow = dayLow;
     }
 
+    public Date getPresent() {
+        return present;
+    }
+
+    public void setPresent(Date present) {
+        this.present = present;
+    }
+
     public float getRefund() {
         return refund;
     }
@@ -112,11 +145,44 @@ public class Bond {
         this.refund = refund;
     }
 
+    public Date getDue() {
+        return due;
+    }
+
+    public void setDue(Date due) {
+        this.due = due;
+    }
+
+    public Date getIssued() {
+        return issued;
+    }
+
+    public void setIssued(Date issued) {
+        this.issued = issued;
+    }
+
+
+
+
+
     /**
-     * get ROI (Return Of Investment)
+     * Get ROI (Return Of Investment).
+     *
+     * Example:  (100.0 - 90.0) / 90.0;
      */
-    public float getROI() {
+    public float getRoi() {
         return (refund - closingPrice) / closingPrice;
+    }
+
+    /**
+     * Get ROI (Return Of Investment) over one year.
+     * <p>
+     * Example: (100.0 - 90.0) / 90.0 / (2017/03/14 - 2017/02/28) * 365;
+     */
+    public float getRoiOverYear() {
+        int days = Apps.getDays(present, due);
+        LOGGER.debug(String.format("%s days in between.", days));
+        return (refund - closingPrice) / closingPrice / (float) days * (float) DAYS_YEAR;
     }
 
     public String toString() {
@@ -131,7 +197,20 @@ public class Bond {
                 "; openingPrice: " + openingPrice +
                 "; dayHigh: " + dayHigh +
                 "; dayLow: " + dayLow +
-                "; refund: " + refund
+                "; present: " + present +
+                "; refund (%): " + refund / 100
                 ;
     }
+
+    /**
+     * Output as a line.
+     * <p>
+     * Example: 36626   78.25   2017/02/28  2019/03/02  0.27795526  0.13878752
+     */
+    public String toLine() {
+        DateFormat dateFormat = new SimpleDateFormat(MY_FORMATTER);
+        return String.format("%s\t%s\t%s\t%s",
+                bondName, closingPrice, dateFormat.format(present), dateFormat.format(due));
+    }
+
 }
