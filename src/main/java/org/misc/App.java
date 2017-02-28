@@ -120,7 +120,7 @@ public class App {
         BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
         String line = br.readLine();
 
-        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date");
+        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date\tROI\tROI_Year");
 
         while ((line = br.readLine().replace("\"", "").replace(" ", "")) != null) {
             String[] lineSplit = line.split(SEPERATOR_COMMA);
