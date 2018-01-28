@@ -23,7 +23,7 @@ import static org.misc.ConstVar.*;
 public class App {
     private static final Logger LOGGER = Logger.getLogger(App.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String... args) throws Exception {
 
         Map<String, Bond> bonds = new HashMap<>();
 
