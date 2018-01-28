@@ -5,7 +5,8 @@
 
 package org.misc;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,7 +22,7 @@ import java.util.Map;
 import static org.misc.ConstVar.*;
 
 public class App {
-    private static final Logger LOGGER = Logger.getLogger(App.class);
+    private static final Logger LOGGER = LogManager.getLogger(App.class);
 
     public static void main(String... args) throws Exception {
 
@@ -119,10 +120,11 @@ public class App {
 
         BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
         String line = br.readLine();
-
+        LOGGER.debug(line);
         System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date\tROI\tROI_Year");
 
         while ((line = br.readLine().replace("\"", "").replace(" ", "")) != null) {
+            LOGGER.debug(line);
             String[] lineSplit = line.split(SEPERATOR_COMMA);
             String bondId = lineSplit[2]; // eg. 12581 or 49581E
 

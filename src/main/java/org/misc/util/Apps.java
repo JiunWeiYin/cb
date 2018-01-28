@@ -7,7 +7,8 @@ package org.misc.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -27,7 +28,7 @@ import java.util.Date;
 import static org.misc.ConstVar.*;
 
 public class Apps {
-    private static final Logger LOGGER = Logger.getLogger(Apps.class);
+    private static final Logger LOGGER = LogManager.getLogger(Apps.class);
 
     /**
      * Loads YAML configurations.

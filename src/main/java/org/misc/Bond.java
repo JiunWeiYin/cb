@@ -5,7 +5,8 @@
 
 package org.misc;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.misc.util.Apps;
 
 import java.text.DateFormat;
@@ -15,7 +16,7 @@ import java.util.Date;
 import static org.misc.ConstVar.*;
 
 public class Bond {
-    private static final Logger LOGGER = Logger.getLogger(Bond.class);
+    private static final Logger LOGGER = LogManager.getLogger(Bond.class);
 
     // daily info
     String bondName;
