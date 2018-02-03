@@ -1,20 +1,8 @@
 
 # url showing daily bond transactions
+# Example: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.96324200%201486284133
 urlBondDaily: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.96324200%201486284133
 
-# description of all bonds, including expired date
-urlBondPublish: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# url bonds, including expired date
+# Example: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv
+urlBondPublished: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv

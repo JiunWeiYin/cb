@@ -1,7 +1,17 @@
 /**
+ * (C) Copyright Chun-Pei Cheng All Rights Reserved
+ * NOTICE:  All information contained herein is, and remains the
+ * property of Chun-Pei Cheng. The intellectual and technical
+ * concepts contained herein are proprietary to Chun-Pei Cheng
+ * and are protected by trade secret, patent law or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Chun-Pei Cheng.
+ *
  * Author: Chun-Pei Cheng
  * Contact: ccp0625@gmail.com
- */
+ *
+ **/
 
 package org.misc;
 
@@ -39,6 +49,13 @@ public class App {
 
         // setup connection
         String urlBondDaily = config.getUrlBondDaily();
+
+        String urlBondPublished = config.geturlBondPublished();
+
+
+
+
+
         if (urlBondDaily != null) {
             LOGGER.info(String.format("Connecting to %s.", urlBondDaily));
         }
@@ -129,6 +146,7 @@ public class App {
 
             bonds.put(bondId, dBond);
         }
+
 
         BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
         String line = br.readLine();
