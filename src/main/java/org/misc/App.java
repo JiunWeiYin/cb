@@ -11,6 +11,8 @@ import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.misc.model.Bond;
+import org.misc.model.Configuration;
 import org.misc.util.Apps;
 
 import java.io.BufferedReader;
@@ -19,7 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.misc.ConstVar.*;
+import static org.misc.constant.ConstVar.*;
 
 public class App {
     private static final Logger LOGGER = LogManager.getLogger(App.class);
@@ -29,17 +31,27 @@ public class App {
         Map<String, Bond> bonds = new HashMap<>();
 
         // set configuration
+        LOGGER.info("Loading the configuration file.");
         Configuration config = Apps.getConfiguration();
-        LOGGER.debug("The configuration is ready.");
+        if (config != null) {
+            LOGGER.info(String.format("Loaded the configuration: %s.", config));
+        }
 
         // setup connection
         String urlBondDaily = config.getUrlBondDaily();
+        if (urlBondDaily != null) {
+            LOGGER.info(String.format("Connecting to %s.", urlBondDaily));
+        }
         Connection conn = Apps.getConnection(urlBondDaily, USER_AGENT, REFERRER, TIME_OUT);
-        LOGGER.info(String.format("Connected to %s.", urlBondDaily));
+        if (conn != null) {
+            LOGGER.info("Verifying the connection.");
+        }
 
         // execute connection
         Connection.Response resp = conn.execute();
-        LOGGER.info("The connection has been established.");
+        if (resp != null) {
+            LOGGER.info("The connection has been established.");
+        }
 
         // get connection response status code
         if (resp.statusCode() != 200) {

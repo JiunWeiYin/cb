@@ -3,7 +3,7 @@
  * Contact: ccp0625@gmail.com
  */
 
-package org.misc;
+package org.misc.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.misc.ConstVar.*;
+import static org.misc.constant.ConstVar.*;
 
 public class Bond {
     private static final Logger LOGGER = LogManager.getLogger(Bond.class);

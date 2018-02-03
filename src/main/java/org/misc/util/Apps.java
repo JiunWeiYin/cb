@@ -13,8 +13,8 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.misc.Configuration;
-import org.misc.ConstVar;
+import org.misc.constant.ConstVar;
+import org.misc.model.Configuration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.misc.ConstVar.*;
+import static org.misc.constant.ConstVar.*;
 
 public class Apps {
     private static final Logger LOGGER = LogManager.getLogger(Apps.class);

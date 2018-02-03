@@ -3,7 +3,7 @@
  * Contact: ccp0625@gmail.com
  */
 
-package org.misc;
+package org.misc.constant;
 
 public class ConstVar {
     public static final int TIME_OUT = 12000;
