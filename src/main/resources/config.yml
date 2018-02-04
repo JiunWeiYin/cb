@@ -1,4 +1,3 @@
-
 # url of daily bond transactions
 # Example: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.96324200%201486284133
 # Caveat: this program currently only supports the transactions provided by Yahoo website shown in the above example.
@@ -15,6 +14,12 @@ urlBondDaily: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.963242
 # 賣回權價格=31, 承銷機構=32, 最近餘額變動日=33, 最近餘額變動原因=34, 幣別=35, 募集方式=36, 發行時轉換價格=37, 轉換期間起=38,
 # 迄=39, 受託人=40 }
 urlBondPublished: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv
+
+#
+# Example 1 (Windows): D:\Users\chunpei.cheng\Documents\bonds_20180204.csv
+# Example 2 (Mac, Linux, Unix): /Users/chunpei.cheng/Documents/bonds_20180204.csv
+outputFilePath: ../bonds_20180204.csv
+
 
 # fee1:
 

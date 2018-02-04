@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class Configuration {
     private String urlBondDaily;
     private String urlBondPublished;
+    private String outputFilePath;
 
     private float fee1;
     private float fee2;
@@ -34,6 +35,9 @@ public class Configuration {
         return urlBondPublished;
     }
 
+    public String getOutputFilePath() {
+        return outputFilePath;
+    }
 
     @Override
     public String toString() {

@@ -27,8 +27,13 @@ import org.misc.model.Bond;
 import org.misc.model.Configuration;
 import org.misc.util.Apps;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,17 +51,17 @@ public class App {
         LOGGER.info("Loading the configuration file.");
         Configuration config = Apps.getConfiguration();
         if (config != null) {
-            LOGGER.info(String.format("Loaded the configuration: %s.", config));
+            LOGGER.info(String.format("Loaded the configuration: %s", config));
         }
 
         String urlBondDaily = config.getUrlBondDaily();
         if (urlBondDaily != null) {
-            LOGGER.info(String.format("url of daily bond: %s.", urlBondDaily));
+            LOGGER.info(String.format("url of daily bond: %s", urlBondDaily));
         }
 
         String urlBondPublished = config.getUrlBondPublished();
         if (urlBondPublished != null) {
-            LOGGER.info(String.format("url of published bond info: %s.", urlBondPublished));
+            LOGGER.info(String.format("url of published bond info: %s", urlBondPublished));
         }
 
         Map<String, Bond> bonds = new HashMap<>();
@@ -67,7 +72,7 @@ public class App {
 
         calculateValues(bonds);
 
-        printResults(bonds);
+        printResults(bonds, config.getOutputFilePath());
 
         LOGGER.info("This program was running successfully.");
     }
@@ -77,7 +82,7 @@ public class App {
 
         Connection conn = Apps.getConnection(urlBondDaily, USER_AGENT, REFERRER, TIME_OUT);
         if (conn != null) {
-            LOGGER.info("Verifying the connection.");
+            LOGGER.info(String.format("Verifying the connection: %s", urlBondDaily));
         }
 
         // execute connection
@@ -147,6 +152,7 @@ public class App {
             String bondId = bond[0]; // eg. 12581 or 49581E
 
             Bond b = new Bond();
+            b.setBondId(bondId); // eg. 12581
             b.setBondName(bond[1]); // eg. 其祥一KY
             b.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
             b.setClosingPrice(Apps.getValueAsFloat(td, CLOSING_PRICE)); // eg. 108.5
@@ -163,12 +169,15 @@ public class App {
             bonds.put(bondId, b);
         }
 
+        LOGGER.info("Processing daily bonds finished.");
     }
 
     private static void processPublishedBond(String urlBondPublished, Map<String, Bond> bonds) throws Exception {
 
+        LOGGER.info(String.format("Verifying the connection: %s", urlBondPublished));
         CSVParser parser = Apps.readAsCSVParser(urlBondPublished);
-        LOGGER.debug("Loaded CSV as a CSVParser object.");
+        LOGGER.info("The connection has been established.");
+        LOGGER.debug("Loaded the CSV as a CSVParser object.");
 
         for (CSVRecord csvRecord : parser) {
             LOGGER.debug(csvRecord.toString());
@@ -203,6 +212,8 @@ public class App {
                 idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
             }
         }
+
+        LOGGER.info("Processing published bonds finished.");
     }
 
     private static void calculateValues(Map<String, Bond> bonds) {
@@ -218,19 +229,25 @@ public class App {
                 b.setAnnualizedReturn(b.getRoi(), b.getPresentDate(), b.getDueDate());
             }
         }
+
+        LOGGER.info("Calculating processes finished.");
     }
 
-    private static void printResults(Map<String, Bond> bonds) {
+    private static void printResults(Map<String, Bond> bonds, String outputFilePath) throws Exception {
+        Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFilePath), StandardCharsets.UTF_8));
         Iterator<String> iter = bonds.keySet().iterator();
-        StringBuilder header;
+        StringBuilder header = new StringBuilder();
         String firstKey;
 
         if (iter.hasNext()) {
-            header = new StringBuilder();
+
             firstKey = iter.next();
             for (Field field : bonds.get(firstKey).getClass().getDeclaredFields()) {
+                if (!header.toString().isEmpty()) {
+                    header.append(",");
+                }
                 if (!Modifier.isStatic(field.getModifiers())) {
-                    header.append(field.getName()).append("\t");
+                    header.append(field.getName());
                 }
             }
         } else {
@@ -239,16 +256,22 @@ public class App {
         }
 
         System.out.println(header);
-        System.out.println(bonds.get(firstKey).toString().replace(",", "\t"));
+        w.write(header.toString().concat("\n"));
+
+        String oLine = bonds.get(firstKey).toString();
+
+        System.out.println(oLine);
+        w.write(oLine.toString().concat("\n"));
 
         while (iter.hasNext()) {
-            System.out.println(bonds.get(iter.next()).toString().replace(",", "\t"));
+            oLine = bonds.get(iter.next()).toString();
+
+            System.out.println(oLine);
+            w.write(oLine.toString().concat("\n"));
         }
 
-        // 大略-KY	48041
-//        Bond idxB = bonds.get("48041");
-//        System.out.println(idxB.toString().replace(",","\t"));
-//        System.out.printf("ROI: %,.2f%% %n", idxB.getRoi() * 100.0);
-//        System.out.printf("ROI over year: %,.2f%% %n", idxB.getAnnualizedReturn() * 100.0);
+        w.close();
+
+        LOGGER.info(String.format("Writing results to path '%s' finished.", outputFilePath));
     }
 }

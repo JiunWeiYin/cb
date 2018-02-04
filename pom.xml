@@ -20,6 +20,7 @@
         <jackson.version>2.5.4</jackson.version>
         <lang3.version>3.5</lang3.version>
         <commons-csv.version>1.5</commons-csv.version>
+        <commons-io.version>2.6</commons-io.version>
     </properties>
 
     <dependencies>
@@ -62,6 +63,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>${commons-csv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
     </dependencies>
     <build>
