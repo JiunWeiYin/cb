@@ -16,6 +16,9 @@
 
 package org.misc.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.misc.util.Apps;
@@ -24,7 +27,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.misc.constant.ConstVar.*;
+import static org.misc.constant.ConstVar.DAYS_YEAR;
+import static org.misc.constant.ConstVar.MY_FORMATTER;
 
 public class Bond {
     private static final Logger LOGGER = LogManager.getLogger(Bond.class);
@@ -41,15 +45,16 @@ public class Bond {
     float openingPrice;
     float dayHigh;
     float dayLow;
-    Date present;
+    Date presentDate;
 
-    // publish info
-    float refund = REFUND;
-
-    Date due;
-    Date issued;
-
-
+    // published info
+    Date dueDate;
+    Date issuedDate;
+    long amount;
+    long balance;
+    float couponRate;
+    Date putRightDate;
+    float putRightPrice;
 
 
 
@@ -141,41 +146,69 @@ public class Bond {
         this.dayLow = dayLow;
     }
 
-    public Date getPresent() {
-        return present;
+    public Date getPresentDate() {
+        return presentDate;
     }
 
-    public void setPresent(Date present) {
-        this.present = present;
+    public void setPresentDate(Date presentDate) {
+        this.presentDate = presentDate;
     }
 
-    public float getRefund() {
-        return refund;
+    public Date getDueDate() {
+        return dueDate;
     }
 
-    public void setRefund(float refund) {
-        this.refund = refund;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public Date getDue() {
-        return due;
+    public Date getIssuedDate() {
+        return issuedDate;
     }
 
-    public void setDue(Date due) {
-        this.due = due;
+    public void setIssuedDate(Date issuedDate) {
+        this.issuedDate = issuedDate;
     }
 
-    public Date getIssued() {
-        return issued;
+    public long getAmount() {
+        return amount;
     }
 
-    public void setIssued(Date issued) {
-        this.issued = issued;
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 
+    public long getBalance() {
+        return balance;
+    }
 
+    public void setBalance(long balance) {
+        this.balance = balance;
+    }
 
+    public float getCouponRate() {
+        return couponRate;
+    }
 
+    public void setCouponRate(float couponRate) {
+        this.couponRate = couponRate;
+    }
+
+    public Date getPutRightDate() {
+        return putRightDate;
+    }
+
+    public void setPutRightDate(Date putRightDate) {
+        this.putRightDate = putRightDate;
+    }
+
+    public float getPutRightPrice() {
+        return putRightPrice;
+    }
+
+    public void setPutRightPrice(float putRightPrice) {
+        this.putRightPrice = putRightPrice;
+    }
 
     /**
      * Get ROI (Return Of Investment).
@@ -183,7 +216,7 @@ public class Bond {
      * Example:  (100.0 - 90.0) / 90.0;
      */
     public float getRoi() {
-        return (refund - closingPrice) / closingPrice;
+        return (putRightPrice - closingPrice) / closingPrice;
     }
 
     /**
@@ -192,26 +225,9 @@ public class Bond {
      * Example: (100.0 - 90.0) / 90.0 / (2017/03/14 - 2017/02/28) * 365;
      */
     public float getRoiOverYear() {
-        int days = Apps.getDays(present, due);
+        int days = Apps.getDays(presentDate, dueDate);
         LOGGER.debug(String.format("%s days in between.", days));
-        return (refund - closingPrice) / closingPrice / (float) days * (float) DAYS_YEAR;
-    }
-
-    public String toString() {
-        return "bondName: " + bondName +
-                "; time: " + time +
-                "; closingPrice: " + closingPrice +
-                "; bidPrice: " + bidPrice +
-                "; offerPrice: " + offerPrice +
-                "; dailyPricing: " + dailyPricing +
-                "; boardLot: " + boardLot +
-                "; ydayClosingPrice: " + ydayClosingPrice +
-                "; openingPrice: " + openingPrice +
-                "; dayHigh: " + dayHigh +
-                "; dayLow: " + dayLow +
-                "; present: " + present +
-                "; refund (%): " + refund / 100
-                ;
+        return (putRightPrice - closingPrice) / closingPrice / (float) days * (float) DAYS_YEAR;
     }
 
     /**
@@ -222,7 +238,33 @@ public class Bond {
     public String toLine() {
         DateFormat dateFormat = new SimpleDateFormat(MY_FORMATTER);
         return String.format("%s\t%s\t%s\t%s",
-                bondName, closingPrice, dateFormat.format(present), dateFormat.format(due));
+                bondName, closingPrice, dateFormat.format(presentDate), dateFormat.format(dueDate));
     }
 
+//    public String toString() {
+//        return "bondName: " + bondName +
+//                "; time: " + time +
+//                "; closingPrice: " + closingPrice +
+//                "; bidPrice: " + bidPrice +
+//                "; offerPrice: " + offerPrice +
+//                "; dailyPricing: " + dailyPricing +
+//                "; boardLot: " + boardLot +
+//                "; ydayClosingPrice: " + ydayClosingPrice +
+//                "; openingPrice: " + openingPrice +
+//                "; dayHigh: " + dayHigh +
+//                "; dayLow: " + dayLow +
+//                "; presentDate: " + presentDate +
+//                "; putRightPrice: " + putRightPrice
+//                ;
+//    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
 }

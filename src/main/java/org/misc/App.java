@@ -62,9 +62,7 @@ public class App {
 
         processPublishedBond(urlBondPublished, bonds);
 
-
-        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date\tROI\tROI_Year");
-
+        inspectBonds(bonds);
 
         LOGGER.info("This program was running successfully.");
     }
@@ -155,7 +153,7 @@ public class App {
             b.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
             b.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
             b.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
-            b.setPresent(new Date()); // eg. 2017/02/28
+            b.setPresentDate(new Date()); // eg. 2017/02/28
 
             bonds.put(bondId, b);
         }
@@ -169,7 +167,10 @@ public class App {
 
         for (CSVRecord csvRecord : parser) {
             LOGGER.debug(csvRecord.toString());
-            String bondId = csvRecord.get(2); // eg. 12581 or 49581E
+
+            if (csvRecord.get(0).isEmpty()) return;
+
+            String bondId = csvRecord.get(2).trim(); // eg. 12581 or 49581E
 
             if (!bonds.containsKey(bondId)) {
                 LOGGER.warn(String.format("Bond ID '%s' cannot be found from daily bonds.", bondId));
@@ -177,33 +178,39 @@ public class App {
             } else {
                 LOGGER.debug(String.format("Bond ID '%s' was found in daily bonds.", bondId));
 
-                Bond idxBond = bonds.get(bondId);
+                Bond idxB = bonds.get(bondId);
                 SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
-                idxBond.setIssued(Apps.formatDate(csvRecord.get(6), formatter));
-                idxBond.setDue(Apps.formatDate(csvRecord.get(7), formatter));
+                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
+                idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
+                idxB.setAmount(Long.parseLong(csvRecord.get(8)));
+                idxB.setBalance(Long.parseLong(csvRecord.get(9)));
+                idxB.setCouponRate(Float.parseFloat(csvRecord.get(10)));
 
-                final float roi = idxBond.getRoi();
-                final float roiOY = idxBond.getRoiOverYear();
-
-                System.out.printf("%s\t%s\t%s\t%s%n", bondId, idxBond.toLine(), roi, roiOY);
-
-                if (bondId.equals("36626")) {
-                    throw new Exception("hit 36626");
+                if (!csvRecord.get(30).trim().equals("0")) {
+                    idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
+                } else {
+                    idxB.setPutRightDate(Apps.formatDate(csvRecord.get(7), formatter));
                 }
+
+                idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
+
+
             }
-
-
-            System.exit(-1);
         }
     }
 
+    private static void inspectBonds(Map<String, Bond> bonds) {
 
+        // 大略-KY	48041
+        Bond idxB = bonds.get("48041");
+        final float roi = idxB.getRoi();
+        final float roiy = idxB.getRoiOverYear();
 
+        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date\tROI\tROI_Year");
+//        System.out.printf("%s\t%s\t%s\t%s%n", "48041", idxB.toLine(), roi, roiy);
 
-
-
-
-
-
-
+        System.out.println(idxB);
+        System.out.printf("ROI: %,.2f%% %n", idxB.getRoi() * 100.0);
+        System.out.printf("ROI over year: %,.2f%% %n", idxB.getRoiOverYear() * 100.0);
+    }
 }

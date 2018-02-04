@@ -23,6 +23,9 @@ public class Configuration {
     private String urlBondDaily;
     private String urlBondPublished;
 
+    private float fee1;
+    private float fee2;
+
     public String getUrlBondDaily() {
         return urlBondDaily;
     }
@@ -30,6 +33,7 @@ public class Configuration {
     public String getUrlBondPublished() {
         return urlBondPublished;
     }
+
 
     @Override
     public String toString() {
