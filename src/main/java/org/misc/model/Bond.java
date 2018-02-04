@@ -56,7 +56,9 @@ public class Bond {
     Date putRightDate;
     float putRightPrice;
 
-
+    // calculated values
+    float roi = Float.MIN_VALUE;
+    float annualizedReturn = Float.MIN_VALUE;
 
     public String getBondName() {
         return bondName;
@@ -215,8 +217,12 @@ public class Bond {
      *
      * Example:  (100.0 - 90.0) / 90.0;
      */
+    public void setRoi(float putRightPrice, float closingPrice) {
+        roi = (putRightPrice - closingPrice) / closingPrice;
+    }
+
     public float getRoi() {
-        return (putRightPrice - closingPrice) / closingPrice;
+        return roi;
     }
 
     /**
@@ -224,10 +230,17 @@ public class Bond {
      * <p>
      * Example: (100.0 - 90.0) / 90.0 / (2017/03/14 - 2017/02/28) * 365;
      */
-    public float getRoiOverYear() {
+    public void setAnnualizedReturn(float roi, Date presentDate, Date dueDate) {
         int days = Apps.getDays(presentDate, dueDate);
-        LOGGER.debug(String.format("%s days in between.", days));
-        return (putRightPrice - closingPrice) / closingPrice / (float) days * (float) DAYS_YEAR;
+        if (days > 0) {
+            annualizedReturn = roi / (float) days * (float) DAYS_YEAR;
+        } else {
+            LOGGER.warn(String.format("# days '%s' between present date '%s' and due date '%s' is negative.", days, presentDate, dueDate));
+        }
+    }
+
+    public float getAnnualizedReturn() {
+        return annualizedReturn;
     }
 
     /**
@@ -238,7 +251,10 @@ public class Bond {
     public String toLine() {
         DateFormat dateFormat = new SimpleDateFormat(MY_FORMATTER);
         return String.format("%s\t%s\t%s\t%s",
-                bondName, closingPrice, dateFormat.format(presentDate), dateFormat.format(dueDate));
+                bondName,
+                closingPrice,
+                dateFormat.format(presentDate),
+                dateFormat.format(dueDate));
     }
 
 //    public String toString() {
@@ -260,7 +276,7 @@ public class Bond {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE, true);
     }
 
     @Override

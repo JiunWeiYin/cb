@@ -27,9 +27,12 @@ import org.misc.model.Bond;
 import org.misc.model.Configuration;
 import org.misc.util.Apps;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static org.misc.constant.ConstVar.*;
@@ -62,7 +65,9 @@ public class App {
 
         processPublishedBond(urlBondPublished, bonds);
 
-        inspectBonds(bonds);
+        calculateValues(bonds);
+
+        printResults(bonds);
 
         LOGGER.info("This program was running successfully.");
     }
@@ -163,20 +168,22 @@ public class App {
     private static void processPublishedBond(String urlBondPublished, Map<String, Bond> bonds) throws Exception {
 
         CSVParser parser = Apps.readAsCSVParser(urlBondPublished);
-        LOGGER.debug("Got parser.");
+        LOGGER.debug("Loaded CSV as a CSVParser object.");
 
         for (CSVRecord csvRecord : parser) {
             LOGGER.debug(csvRecord.toString());
+            String companyCode = csvRecord.get(0).trim();
 
-            if (csvRecord.get(0).isEmpty()) return;
+            if (companyCode.isEmpty()) return;
 
             String bondId = csvRecord.get(2).trim(); // eg. 12581 or 49581E
 
-            if (!bonds.containsKey(bondId)) {
-                LOGGER.warn(String.format("Bond ID '%s' cannot be found from daily bonds.", bondId));
-
+            if (bondId.isEmpty()) {
+                LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV is empty", bondId, companyCode));
+            } else if (!bonds.containsKey(bondId)) {
+                LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV cannot be found from the website of daily bonds.", bondId, companyCode));
             } else {
-                LOGGER.debug(String.format("Bond ID '%s' was found in daily bonds.", bondId));
+                LOGGER.debug(String.format("Bond ID '%s' of company code '%s' in the CSV was found from the website of daily bonds.", bondId, companyCode));
 
                 Bond idxB = bonds.get(bondId);
                 SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
@@ -189,28 +196,59 @@ public class App {
                 if (!csvRecord.get(30).trim().equals("0")) {
                     idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
                 } else {
-                    idxB.setPutRightDate(Apps.formatDate(csvRecord.get(7), formatter));
+                    LOGGER.warn(String.format("Invalid format of Put Right Date '%s' of bond ID '%s' in the CSV.",
+                            csvRecord.get(30), bondId));
                 }
 
                 idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
-
-
             }
         }
     }
 
-    private static void inspectBonds(Map<String, Bond> bonds) {
+    private static void calculateValues(Map<String, Bond> bonds) {
+
+        for (String key : bonds.keySet()) {
+            Bond b = bonds.get(key);
+
+            if (b.getPutRightPrice() != Float.NaN && b.getClosingPrice() != 0.0f) {
+                b.setRoi(b.getPutRightPrice(), b.getClosingPrice());
+            }
+
+            if (b.getRoi() != Float.NaN && b.getPresentDate() != null && b.getDueDate() != null) {
+                b.setAnnualizedReturn(b.getRoi(), b.getPresentDate(), b.getDueDate());
+            }
+        }
+    }
+
+    private static void printResults(Map<String, Bond> bonds) {
+        Iterator<String> iter = bonds.keySet().iterator();
+        StringBuilder header;
+        String firstKey;
+
+        if (iter.hasNext()) {
+            header = new StringBuilder();
+            firstKey = iter.next();
+            for (Field field : bonds.get(firstKey).getClass().getDeclaredFields()) {
+                if (!Modifier.isStatic(field.getModifiers())) {
+                    header.append(field.getName()).append("\t");
+                }
+            }
+        } else {
+            LOGGER.error("There is no any bonds available for further discussion.");
+            throw new RuntimeException("There is no any bonds available for further discussion.");
+        }
+
+        System.out.println(header);
+        System.out.println(bonds.get(firstKey).toString().replace(",", "\t"));
+
+        while (iter.hasNext()) {
+            System.out.println(bonds.get(iter.next()).toString().replace(",", "\t"));
+        }
 
         // 大略-KY	48041
-        Bond idxB = bonds.get("48041");
-        final float roi = idxB.getRoi();
-        final float roiy = idxB.getRoiOverYear();
-
-        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date\tROI\tROI_Year");
-//        System.out.printf("%s\t%s\t%s\t%s%n", "48041", idxB.toLine(), roi, roiy);
-
-        System.out.println(idxB);
-        System.out.printf("ROI: %,.2f%% %n", idxB.getRoi() * 100.0);
-        System.out.printf("ROI over year: %,.2f%% %n", idxB.getRoiOverYear() * 100.0);
+//        Bond idxB = bonds.get("48041");
+//        System.out.println(idxB.toString().replace(",","\t"));
+//        System.out.printf("ROI: %,.2f%% %n", idxB.getRoi() * 100.0);
+//        System.out.printf("ROI over year: %,.2f%% %n", idxB.getAnnualizedReturn() * 100.0);
     }
 }
