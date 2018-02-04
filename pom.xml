@@ -19,6 +19,7 @@
         <slf4j-log4j12.version>1.7.25</slf4j-log4j12.version>
         <jackson.version>2.5.4</jackson.version>
         <lang3.version>3.5</lang3.version>
+        <commons-csv.version>1.5</commons-csv.version>
     </properties>
 
     <dependencies>
@@ -56,6 +57,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>${commons-csv.version}</version>
         </dependency>
     </dependencies>
     <build>

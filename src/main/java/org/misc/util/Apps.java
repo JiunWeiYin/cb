@@ -13,11 +13,12 @@
  *
  **/
 
-
 package org.misc.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -152,10 +154,20 @@ public class Apps {
      *
      * @return BufferedReader
      */
-    public static BufferedReader readFileAsBufferedReader(String url) throws IOException {
+    public static BufferedReader readAsBufferedReader(String url) throws IOException {
         InputStreamReader isr = new InputStreamReader(new URL(url).openStream(), BIG5);
         LOGGER.debug(String.format("The encoding type is %s.", isr.getEncoding()));
         return new BufferedReader(isr);
+    }
+
+    /**
+     * Read text file.
+     *
+     * @return CSVParser
+     */
+    public static CSVParser readAsCSVParser(String url) throws Exception {
+        CSVParser parser = CSVParser.parse(new URL(url), Charset.forName(BIG5), CSVFormat.RFC4180.withHeader());
+        return parser;
     }
 
     /**

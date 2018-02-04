@@ -13,7 +13,6 @@
  *
  **/
 
-
 package org.misc.constant;
 
 public class ConstVar {
@@ -34,7 +33,6 @@ public class ConstVar {
     public static final String BGCOLOR_VALUE = "#ffffff";
 
     public static final String SEPERATOR_SPACE = " ";
-    public static final String SEPERATOR_COMMA = ",";
 
 
     public static final String BOND = "bond";

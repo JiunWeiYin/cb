@@ -42,9 +42,9 @@ public class AppsTest {
     }
 
     @Test
-    public void testGeturlBondPublish() throws IOException {
+    public void testGeturlBondPublished() throws IOException {
         Configuration conf = Apps.getConfiguration();
-        assertEquals("http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv", conf.geturlBondPublish());
+        assertEquals("http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv", conf.getUrlBondPublished());
     }
 
 

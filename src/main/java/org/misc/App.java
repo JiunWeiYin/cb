@@ -15,6 +15,8 @@
 
 package org.misc;
 
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
@@ -25,7 +27,6 @@ import org.misc.model.Bond;
 import org.misc.model.Configuration;
 import org.misc.util.Apps;
 
-import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,27 +39,39 @@ public class App {
 
     public static void main(String... args) throws Exception {
 
-        Map<String, Bond> bonds = new HashMap<>();
-
-        // set configuration
+        // handle configuration
         LOGGER.info("Loading the configuration file.");
         Configuration config = Apps.getConfiguration();
         if (config != null) {
             LOGGER.info(String.format("Loaded the configuration: %s.", config));
         }
 
-        // setup connection
         String urlBondDaily = config.getUrlBondDaily();
-
-        String urlBondPublished = config.geturlBondPublished();
-
-
-
-
-
         if (urlBondDaily != null) {
-            LOGGER.info(String.format("Connecting to %s.", urlBondDaily));
+            LOGGER.info(String.format("url of daily bond: %s.", urlBondDaily));
         }
+
+        String urlBondPublished = config.getUrlBondPublished();
+        if (urlBondPublished != null) {
+            LOGGER.info(String.format("url of published bond info: %s.", urlBondPublished));
+        }
+
+        Map<String, Bond> bonds = new HashMap<>();
+
+        processDailyBond(urlBondDaily, bonds);
+
+        processPublishedBond(urlBondPublished, bonds);
+
+
+        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date\tROI\tROI_Year");
+
+
+        LOGGER.info("This program was running successfully.");
+    }
+
+
+    private static void processDailyBond(String urlBondDaily, Map<String, Bond> bonds) throws Exception {
+
         Connection conn = Apps.getConnection(urlBondDaily, USER_AGENT, REFERRER, TIME_OUT);
         if (conn != null) {
             LOGGER.info("Verifying the connection.");
@@ -74,19 +87,19 @@ public class App {
         if (resp.statusCode() != 200) {
             LOGGER.error(String.format("The connection response status code is %s. " +
                     "Please check if the internet is working.", resp.statusCode()));
-            return;
+            throw new IllegalArgumentException();
         }
         LOGGER.debug(String.format("The connection response status code is %s.", resp.statusCode()));
 
         // convert HTML to doc
         Document doc = conn.get();
-        LOGGER.debug("The HTML has been converted as a Document object.");
+        LOGGER.debug("The HTML has been loaded as a Document object.");
 
         // select all <table>
         Elements tables = doc.select(TABLE);
         if (tables.size() <= 0) {
             LOGGER.error(String.format("<%s> was not found.", TABLE));
-            return;
+            throw new IllegalArgumentException();
         }
         LOGGER.debug(String.format("Got all <%s>.", TABLE));
 
@@ -94,7 +107,7 @@ public class App {
         Element table = Apps.searchTable(tables, CLASS, YUI_TEXT_LEFT);
         if (table == null) {
             LOGGER.error(String.format("<%s %s=%s> was not found.", TABLE, CLASS, YUI_TEXT_LEFT));
-            return;
+            throw new IllegalArgumentException();
         }
         LOGGER.debug(String.format("Got the <%s %s=%s>.", TABLE, CLASS, YUI_TEXT_LEFT));
 
@@ -102,7 +115,7 @@ public class App {
         table = Apps.searchTable(table.select(TABLE), BGCOLOR, BGCOLOR_VALUE);
         if (table == null) {
             LOGGER.error(String.format("<%s %s=%s> was not found.", TABLE, BGCOLOR, BGCOLOR_VALUE));
-            return;
+            throw new IllegalArgumentException();
         }
         LOGGER.debug(String.format("Got the <%s %s=%s>.", TABLE, BGCOLOR, BGCOLOR_VALUE));
 
@@ -110,14 +123,14 @@ public class App {
         Elements tr = table.select(TR);
         if (tr.isEmpty()) {
             LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TR, urlBondDaily));
-            return;
+            throw new IllegalArgumentException();
         }
         LOGGER.debug(String.format("Got the <%s>.", TR));
 
         // check if <td> is present
         if (tr.select(TD).isEmpty()) {
             LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TD, urlBondDaily));
-            return;
+            throw new IllegalArgumentException();
         }
         LOGGER.debug(String.format("Got the <%s>.", TD));
 
@@ -130,44 +143,44 @@ public class App {
             String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR_SPACE);
             String bondId = bond[0]; // eg. 12581 or 49581E
 
-            Bond dBond = new Bond();
-            dBond.setBondName(bond[1]); // eg. 其祥一KY
-            dBond.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
-            dBond.setClosingPrice(Apps.getValueAsFloat(td, CLOSING_PRICE)); // eg. 108.5
-            dBond.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
-            dBond.setOfferPrice(Apps.getValueAsFloat(td, OFFER_PRICE)); // eg. 108.5
-            dBond.setDailyPricing(Apps.getValueAsString(td, DAILY_PRICING)); // eg. △1.30
-            dBond.setBoardLot(Apps.getValueAsInt(td, BOARD_LOT)); // eg. 0.0
-            dBond.setYdayClosingPrice(Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE)); // eg. 108.5
-            dBond.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
-            dBond.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
-            dBond.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
-            dBond.setPresent(new Date()); // eg. 2017/02/28
+            Bond b = new Bond();
+            b.setBondName(bond[1]); // eg. 其祥一KY
+            b.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
+            b.setClosingPrice(Apps.getValueAsFloat(td, CLOSING_PRICE)); // eg. 108.5
+            b.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
+            b.setOfferPrice(Apps.getValueAsFloat(td, OFFER_PRICE)); // eg. 108.5
+            b.setDailyPricing(Apps.getValueAsString(td, DAILY_PRICING)); // eg. △1.30
+            b.setBoardLot(Apps.getValueAsInt(td, BOARD_LOT)); // eg. 0.0
+            b.setYdayClosingPrice(Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE)); // eg. 108.5
+            b.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
+            b.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
+            b.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
+            b.setPresent(new Date()); // eg. 2017/02/28
 
-            bonds.put(bondId, dBond);
+            bonds.put(bondId, b);
         }
 
+    }
 
-        BufferedReader br = Apps.readFileAsBufferedReader(config.geturlBondPublish());
-        String line = br.readLine();
-        LOGGER.debug(line);
-        System.out.println("Bond_Id\tBond_Name\tClosing_Price\tPresent_Date\tDue_Date\tROI\tROI_Year");
+    private static void processPublishedBond(String urlBondPublished, Map<String, Bond> bonds) throws Exception {
 
-        while ((line = br.readLine().replace("\"", "").replace(" ", "")) != null) {
-            LOGGER.debug(line);
-            String[] lineSplit = line.split(SEPERATOR_COMMA);
-            String bondId = lineSplit[2]; // eg. 12581 or 49581E
+        CSVParser parser = Apps.readAsCSVParser(urlBondPublished);
+        LOGGER.debug("Got parser.");
+
+        for (CSVRecord csvRecord : parser) {
+            LOGGER.debug(csvRecord.toString());
+            String bondId = csvRecord.get(2); // eg. 12581 or 49581E
 
             if (!bonds.containsKey(bondId)) {
                 LOGGER.warn(String.format("Bond ID '%s' cannot be found from daily bonds.", bondId));
+
             } else {
                 LOGGER.debug(String.format("Bond ID '%s' was found in daily bonds.", bondId));
-                LOGGER.debug(line);
 
                 Bond idxBond = bonds.get(bondId);
                 SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
-                idxBond.setIssued(Apps.formatDate(lineSplit[6], formatter));
-                idxBond.setDue(Apps.formatDate(lineSplit[7], formatter));
+                idxBond.setIssued(Apps.formatDate(csvRecord.get(6), formatter));
+                idxBond.setDue(Apps.formatDate(csvRecord.get(7), formatter));
 
                 final float roi = idxBond.getRoi();
                 final float roiOY = idxBond.getRoiOverYear();
@@ -180,11 +193,17 @@ public class App {
             }
 
 
+            System.exit(-1);
         }
-
-
-        LOGGER.info("This program was running successfully.");
     }
+
+
+
+
+
+
+
+
 
 
 }

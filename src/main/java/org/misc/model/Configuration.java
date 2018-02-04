@@ -13,7 +13,6 @@
  *
  **/
 
-
 package org.misc.model;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
