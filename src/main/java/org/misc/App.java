@@ -234,6 +234,7 @@ public class App {
     }
 
     private static void printResults(Map<String, Bond> bonds, String outputFilePath) throws Exception {
+        LOGGER.info("Writing results.");
         Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFilePath), StandardCharsets.UTF_8));
         Iterator<String> iter = bonds.keySet().iterator();
         StringBuilder header = new StringBuilder();
@@ -272,6 +273,6 @@ public class App {
 
         w.close();
 
-        LOGGER.info(String.format("Writing results to path '%s' finished.", outputFilePath));
+        LOGGER.info(String.format("Wrote results to path '%s' completely.", outputFilePath));
     }
 }
