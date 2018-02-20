@@ -198,9 +198,9 @@ public class App {
                 SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
                 idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
                 idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
-                idxB.setAmount(Long.parseLong(csvRecord.get(8)));
-                idxB.setBalance(Long.parseLong(csvRecord.get(9)));
-                idxB.setCouponRate(Float.parseFloat(csvRecord.get(10)));
+//                idxB.setAmount(Long.parseLong(csvRecord.get(8)));
+//                idxB.setBalance(Long.parseLong(csvRecord.get(9)));
+//                idxB.setCouponRate(Float.parseFloat(csvRecord.get(10)));
 
                 if (!csvRecord.get(30).trim().equals("0")) {
                     idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
@@ -225,8 +225,8 @@ public class App {
                 b.setRoi(b.getPutRightPrice(), b.getClosingPrice());
             }
 
-            if (b.getRoi() != Float.NaN && b.getPresentDate() != null && b.getDueDate() != null) {
-                b.setAnnualizedReturn(b.getRoi(), b.getPresentDate(), b.getDueDate());
+            if (b.getRoi() != Float.NaN && b.getPresentDate() != null && b.getPutRightDate() != null) {
+                b.setAnnualizedReturn(b.getRoi(), b.getPresentDate(), b.getPutRightDate());
             }
         }
 
@@ -256,19 +256,15 @@ public class App {
             throw new RuntimeException("There is no any bonds available for further discussion.");
         }
 
-        System.out.println(header);
-        w.write(header.toString().concat("\n"));
+        String fmtHeader = header.append("\n").toString().replace(",", "\t");
+        w.write(fmtHeader);
 
-        String oLine = bonds.get(firstKey).toString();
-
-        System.out.println(oLine);
-        w.write(oLine.toString().concat("\n"));
+        String oLine = bonds.get(firstKey).toString().replace(",", "\t").concat("\n");
+        w.write(oLine);
 
         while (iter.hasNext()) {
-            oLine = bonds.get(iter.next()).toString();
-
-            System.out.println(oLine);
-            w.write(oLine.toString().concat("\n"));
+            oLine = bonds.get(iter.next()).toString().replace(",", "\t").concat("\n");
+            w.write(oLine);
         }
 
         w.close();

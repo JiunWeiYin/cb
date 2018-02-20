@@ -51,9 +51,9 @@ public class Bond {
     // published info
     Date dueDate;
     Date issuedDate;
-    long amount;
-    long balance;
-    float couponRate;
+    //    long amount;
+//    long balance;
+//    float couponRate;
     Date putRightDate;
     float putRightPrice;
 
@@ -181,29 +181,29 @@ public class Bond {
         this.issuedDate = issuedDate;
     }
 
-    public long getAmount() {
-        return amount;
-    }
+//    public long getAmount() {
+//        return amount;
+//    }
 
-    public void setAmount(long amount) {
-        this.amount = amount;
-    }
+//    public void setAmount(long amount) {
+//        this.amount = amount;
+//    }
 
-    public long getBalance() {
-        return balance;
-    }
+//    public long getBalance() {
+//        return balance;
+//    }
 
-    public void setBalance(long balance) {
-        this.balance = balance;
-    }
+//    public void setBalance(long balance) {
+//        this.balance = balance;
+//    }
 
-    public float getCouponRate() {
-        return couponRate;
-    }
+//    public float getCouponRate() {
+//        return couponRate;
+//    }
 
-    public void setCouponRate(float couponRate) {
-        this.couponRate = couponRate;
-    }
+//    public void setCouponRate(float couponRate) {
+//        this.couponRate = couponRate;
+//    }
 
     public Date getPutRightDate() {
         return putRightDate;
@@ -224,10 +224,10 @@ public class Bond {
     /**
      * Get ROI (Return Of Investment).
      *
-     * Example:  (100.0 - 90.0) / 90.0;
+     * Example:  (100 + (101.0025 - 100) * 0.9) / (90 * 1.001425);
      */
     public void setRoi(float putRightPrice, float closingPrice) {
-        roi = (putRightPrice - closingPrice) / closingPrice;
+        roi = (100f + (putRightPrice - 100f) * 0.9f) / (closingPrice * 1.001425f);
     }
 
     public float getRoi() {
@@ -235,16 +235,16 @@ public class Bond {
     }
 
     /**
-     * Get ROI (Return Of Investment) over one year.
+     * Get annual return.
      * <p>
-     * Example: (100.0 - 90.0) / 90.0 / (2017/03/14 - 2017/02/28) * 365;
+     * Example: ROI / (2017/03/14 - 2017/02/28) * 365;
      */
-    public void setAnnualizedReturn(float roi, Date presentDate, Date dueDate) {
-        int days = Apps.getDays(presentDate, dueDate);
+    public void setAnnualizedReturn(float roi, Date presentDate, Date putRightDate) {
+        int days = Apps.getDays(presentDate, putRightDate);
         if (days > 0) {
             annualizedReturn = roi / (float) days * (float) DAYS_YEAR;
         } else {
-            LOGGER.warn(String.format("# days '%s' between present date '%s' and due date '%s' is negative.", days, presentDate, dueDate));
+            LOGGER.warn(String.format("# days '%s' between present date '%s' and due date '%s' is negative.", days, presentDate, putRightDate));
         }
     }
 
