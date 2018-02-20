@@ -154,16 +154,16 @@ public class App {
             Bond b = new Bond();
             b.setBondId(bondId); // eg. 12581
             b.setBondName(bond[1]); // eg. 其祥一KY
-            b.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
+//            b.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
             b.setClosingPrice(Apps.getValueAsFloat(td, CLOSING_PRICE)); // eg. 108.5
-            b.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
-            b.setOfferPrice(Apps.getValueAsFloat(td, OFFER_PRICE)); // eg. 108.5
-            b.setDailyPricing(Apps.getValueAsString(td, DAILY_PRICING)); // eg. △1.30
-            b.setBoardLot(Apps.getValueAsInt(td, BOARD_LOT)); // eg. 0.0
-            b.setYdayClosingPrice(Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE)); // eg. 108.5
-            b.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
-            b.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
-            b.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
+//            b.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
+//            b.setOfferPrice(Apps.getValueAsFloat(td, OFFER_PRICE)); // eg. 108.5
+//            b.setDailyPricing(Apps.getValueAsString(td, DAILY_PRICING)); // eg. △1.30
+//            b.setBoardLot(Apps.getValueAsInt(td, BOARD_LOT)); // eg. 0.0
+//            b.setYdayClosingPrice(Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE)); // eg. 108.5
+//            b.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
+//            b.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
+//            b.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
             b.setPresentDate(new Date()); // eg. 2017/02/28
 
             bonds.put(bondId, b);
@@ -196,7 +196,7 @@ public class App {
 
                 Bond idxB = bonds.get(bondId);
                 SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
-                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
+//                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
                 idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
 //                idxB.setAmount(Long.parseLong(csvRecord.get(8)));
 //                idxB.setBalance(Long.parseLong(csvRecord.get(9)));
@@ -204,6 +204,10 @@ public class App {
 
                 if (!csvRecord.get(30).trim().equals("0")) {
                     idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
+
+                } else if (idxB.getDueDate() != null) {
+                    idxB.setPutRightDate(idxB.getDueDate());
+
                 } else {
                     LOGGER.warn(String.format("Invalid format of Put Right Date '%s' of bond ID '%s' in the CSV.",
                             csvRecord.get(30), bondId));

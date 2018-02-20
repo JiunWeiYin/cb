@@ -36,30 +36,30 @@ public class Bond {
     // daily info
     String bondId;
     String bondName;
-    String time;
+    //    String time;
     float closingPrice;
-    float bidPrice;
-    float offerPrice;
-    String dailyPricing;
-    int boardLot;
-    float ydayClosingPrice;
-    float openingPrice;
-    float dayHigh;
-    float dayLow;
+    //    float bidPrice;
+//    float offerPrice;
+//    String dailyPricing;
+//    int boardLot;
+//    float ydayClosingPrice;
+//    float openingPrice;
+//    float dayHigh;
+//    float dayLow;
     Date presentDate;
 
     // published info
+    Date putRightDate;
     Date dueDate;
-    Date issuedDate;
-    //    long amount;
+    //    Date issuedDate;
+//    long amount;
 //    long balance;
 //    float couponRate;
-    Date putRightDate;
     float putRightPrice;
 
     // calculated values
-    float roi = Float.MIN_VALUE;
-    float annualizedReturn = Float.MIN_VALUE;
+    float roi;
+    float annualizedReturn;
 
     public String getBondId() {
         return bondId;
@@ -77,84 +77,12 @@ public class Bond {
         this.bondName = bondName;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public float getClosingPrice() {
         return closingPrice;
     }
 
     public void setClosingPrice(float closingPrice) {
         this.closingPrice = closingPrice;
-    }
-
-    public float getBidPrice() {
-        return bidPrice;
-    }
-
-    public void setBidPrice(float bidPrice) {
-        this.bidPrice = bidPrice;
-    }
-
-    public float getOfferPrice() {
-        return offerPrice;
-    }
-
-    public void setOfferPrice(float offerPrice) {
-        this.offerPrice = offerPrice;
-    }
-
-    public String getDailyPricing() {
-        return dailyPricing;
-    }
-
-    public void setDailyPricing(String dailyPricing) {
-        this.dailyPricing = dailyPricing;
-    }
-
-    public int getBoardLot() {
-        return boardLot;
-    }
-
-    public void setBoardLot(int boardLot) {
-        this.boardLot = boardLot;
-    }
-
-    public float getYdayClosingPrice() {
-        return ydayClosingPrice;
-    }
-
-    public void setYdayClosingPrice(float ydayClosingPrice) {
-        this.ydayClosingPrice = ydayClosingPrice;
-    }
-
-    public float getOpeningPrice() {
-        return openingPrice;
-    }
-
-    public void setOpeningPrice(float openingPrice) {
-        this.openingPrice = openingPrice;
-    }
-
-    public float getDayHigh() {
-        return dayHigh;
-    }
-
-    public void setDayHigh(float dayHigh) {
-        this.dayHigh = dayHigh;
-    }
-
-    public float getDayLow() {
-        return dayLow;
-    }
-
-    public void setDayLow(float dayLow) {
-        this.dayLow = dayLow;
     }
 
     public Date getPresentDate() {
@@ -172,38 +100,6 @@ public class Bond {
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
-
-    public Date getIssuedDate() {
-        return issuedDate;
-    }
-
-    public void setIssuedDate(Date issuedDate) {
-        this.issuedDate = issuedDate;
-    }
-
-//    public long getAmount() {
-//        return amount;
-//    }
-
-//    public void setAmount(long amount) {
-//        this.amount = amount;
-//    }
-
-//    public long getBalance() {
-//        return balance;
-//    }
-
-//    public void setBalance(long balance) {
-//        this.balance = balance;
-//    }
-
-//    public float getCouponRate() {
-//        return couponRate;
-//    }
-
-//    public void setCouponRate(float couponRate) {
-//        this.couponRate = couponRate;
-//    }
 
     public Date getPutRightDate() {
         return putRightDate;
