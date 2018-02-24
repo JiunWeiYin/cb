@@ -181,6 +181,13 @@ public class App {
 
         for (CSVRecord csvRecord : parser) {
             LOGGER.debug(csvRecord.toString());
+
+            // check if the size of records and header is identical
+            if (csvRecord.size() != parser.getHeaderMap().size()) {
+                LOGGER.error(String.format("Invalid file: the size of records and header is unidentical in '%s'", urlBondPublished));
+                System.exit(5566);
+            }
+
             String companyCode = csvRecord.get(0).trim();
 
             if (companyCode.isEmpty()) return;
