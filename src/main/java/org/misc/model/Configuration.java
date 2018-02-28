@@ -23,9 +23,8 @@ public class Configuration {
     private String urlBondDaily;
     private String urlBondPublished;
     private String outputFilePath;
-
-    private float fee1;
-    private float fee2;
+    private float fee;
+    private float thresholdClosingPrice;
 
     public String getUrlBondDaily() {
         return urlBondDaily;
@@ -37,6 +36,14 @@ public class Configuration {
 
     public String getOutputFilePath() {
         return outputFilePath;
+    }
+
+    public float getFee() {
+        return fee;
+    }
+
+    public float getThresholdClosingPrice() {
+        return thresholdClosingPrice;
     }
 
     @Override

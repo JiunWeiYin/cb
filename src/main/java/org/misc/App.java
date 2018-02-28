@@ -64,13 +64,23 @@ public class App {
             LOGGER.info(String.format("url of published bond info: %s", urlBondPublished));
         }
 
+        float fee = config.getFee();
+        if (fee >= 0) {
+            LOGGER.info(String.format("fee: %s", fee));
+        }
+
+        float thrshd = config.getThresholdClosingPrice();
+        if (thrshd >= 0) {
+            LOGGER.info(String.format("thresholdClosingPrice: %s", thrshd));
+        }
+
         Map<String, Bond> bonds = new HashMap<>();
 
-        processDailyBond(urlBondDaily, bonds);
+        processDailyBond(urlBondDaily, bonds, thrshd);
 
         processPublishedBond(urlBondPublished, bonds);
 
-        calculateValues(bonds);
+        calculateValues(bonds, fee);
 
         printResults(bonds, config.getOutputFilePath());
 
@@ -78,7 +88,7 @@ public class App {
     }
 
 
-    private static void processDailyBond(String urlBondDaily, Map<String, Bond> bonds) throws Exception {
+    private static void processDailyBond(String urlBondDaily, Map<String, Bond> bonds, float thrshd) throws Exception {
 
         Connection conn = Apps.getConnection(urlBondDaily, USER_AGENT, REFERRER, TIME_OUT);
         if (conn != null) {
@@ -152,12 +162,22 @@ public class App {
             String bondId = bond[0]; // eg. 12581 or 49581E
             String bondName = bond[1]; // eg. 其祥一KY
             float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE);
+
+            if (closingPrice == Float.MIN_VALUE) {
+                LOGGER.warn(String.format("The closing price of '%s' is not a valid number '%s'. Skipped this record.",
+                        bondName, Apps.getValueAsString(td, CLOSING_PRICE)));
+                continue;
+            } else if (closingPrice > thrshd) {
+                LOGGER.warn(String.format("The closing price '%s' of '%s' is higher than user-defined threshold '%s'. Skipped this record.",
+                        closingPrice, bondName, thrshd));
+                continue;
+            }
+
             Bond b = new Bond();
-            if (closingPrice > Float.MIN_VALUE) {
-                b.setBondId(bondId); // eg. 12581
-                b.setBondName(bondName); // eg. 其祥一KY
+            b.setBondId(bondId); // eg. 12581
+            b.setBondName(bondName); // eg. 其祥一KY
 //            b.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
-                b.setClosingPrice(closingPrice); // eg. 108.5
+            b.setClosingPrice(closingPrice); // eg. 108.5
 //            b.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
 //            b.setOfferPrice(Apps.getValueAsFloat(td, OFFER_PRICE)); // eg. 108.5
 //            b.setDailyPricing(Apps.getValueAsString(td, DAILY_PRICING)); // eg. △1.30
@@ -166,11 +186,7 @@ public class App {
 //            b.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
 //            b.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
 //            b.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
-                b.setPresentDate(new Date()); // eg. 2017/02/28
-            } else {
-                LOGGER.warn(String.format("The closing price of '%s' is not a valid number '%s'. Skip this record.",
-                        bondName, Apps.getValueAsString(td, CLOSING_PRICE)));
-            }
+            b.setPresentDate(new Date()); // eg. 2017/02/28
 
             bonds.put(bondId, b);
         }
@@ -248,7 +264,7 @@ public class App {
         return csvRd.size() == header.size();
     }
 
-    private static void calculateValues(Map<String, Bond> bonds) {
+    private static void calculateValues(Map<String, Bond> bonds, float fee) {
 
         for (String key : bonds.keySet()) {
             Bond b = bonds.get(key);
