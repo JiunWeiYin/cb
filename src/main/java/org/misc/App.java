@@ -167,7 +167,7 @@ public class App {
                 LOGGER.warn(String.format("The closing price of '%s' is not a valid number '%s'. Skipped this record.",
                         bondName, Apps.getValueAsString(td, CLOSING_PRICE)));
                 continue;
-            } else if (closingPrice > thrshd) {
+            } else if (closingPrice >= thrshd) {
                 LOGGER.warn(String.format("The closing price '%s' of '%s' is higher than user-defined threshold '%s'. Skipped this record.",
                         closingPrice, bondName, thrshd));
                 continue;
