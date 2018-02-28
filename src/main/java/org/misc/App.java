@@ -150,12 +150,14 @@ public class App {
 
             String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR_SPACE);
             String bondId = bond[0]; // eg. 12581 or 49581E
-
+            String bondName = bond[1]; // eg. 其祥一KY
+            float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE);
             Bond b = new Bond();
-            b.setBondId(bondId); // eg. 12581
-            b.setBondName(bond[1]); // eg. 其祥一KY
+            if (closingPrice > Float.MIN_VALUE) {
+                b.setBondId(bondId); // eg. 12581
+                b.setBondName(bondName); // eg. 其祥一KY
 //            b.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
-            b.setClosingPrice(Apps.getValueAsFloat(td, CLOSING_PRICE)); // eg. 108.5
+                b.setClosingPrice(closingPrice); // eg. 108.5
 //            b.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
 //            b.setOfferPrice(Apps.getValueAsFloat(td, OFFER_PRICE)); // eg. 108.5
 //            b.setDailyPricing(Apps.getValueAsString(td, DAILY_PRICING)); // eg. △1.30
@@ -164,7 +166,11 @@ public class App {
 //            b.setOpeningPrice(Apps.getValueAsFloat(td, OPENING_PRICE)); // eg. 0.0
 //            b.setDayHigh(Apps.getValueAsFloat(td, DAY_HIGH)); // eg. 108.5
 //            b.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
-            b.setPresentDate(new Date()); // eg. 2017/02/28
+                b.setPresentDate(new Date()); // eg. 2017/02/28
+            } else {
+                LOGGER.warn(String.format("The closing price of '%s' is not a valid number '%s'. Skip this record.",
+                        bondName, Apps.getValueAsString(td, CLOSING_PRICE)));
+            }
 
             bonds.put(bondId, b);
         }
@@ -179,17 +185,26 @@ public class App {
         LOGGER.info("The connection has been established.");
         LOGGER.debug("Loaded the CSV as a CSVParser object.");
 
+        Iterator<CSVRecord> iCSVRd = parser.iterator();
+        if (iCSVRd.hasNext()) {
+            CSVRecord fstRd = iCSVRd.next();
+            LOGGER.debug(String.format("first CSV record: %s", fstRd));
+
+            if (!isValid(fstRd, parser.getHeaderMap())) {
+                LOGGER.error(String.format("Invalid file: the size of records and header is unidentical in '%s'. " +
+                        "Is today a holiday? You may try running this program again during weekday.", urlBondPublished));
+                System.exit(5566);
+            }
+        } else {
+            LOGGER.error(String.format("Invalid CSV file downloaded from '%s'. " +
+                    "Is today a holiday? You may try running this program again during weekday.", urlBondPublished));
+            System.exit(5566);
+        }
+
         for (CSVRecord csvRecord : parser) {
             LOGGER.debug(csvRecord.toString());
 
-            // check if the size of records and header is identical
-            if (csvRecord.size() != parser.getHeaderMap().size()) {
-                LOGGER.error(String.format("Invalid file: the size of records and header is unidentical in '%s'", urlBondPublished));
-                System.exit(5566);
-            }
-
             String companyCode = csvRecord.get(0).trim();
-
             if (companyCode.isEmpty()) return;
 
             String bondId = csvRecord.get(2).trim(); // eg. 12581 or 49581E
@@ -225,6 +240,12 @@ public class App {
         }
 
         LOGGER.info("Processing published bonds finished.");
+    }
+
+
+    // check if the size of records and header is identical
+    private static boolean isValid(CSVRecord csvRd, Map<String, Integer> header) {
+        return csvRd.size() == header.size();
     }
 
     private static void calculateValues(Map<String, Bond> bonds) {
