@@ -16,7 +16,7 @@ urlBondPublished: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv
 # path of output file in CSV format (https://en.wikipedia.org/wiki/Comma-separated_values)
 # Example 1 (Windows): D:\Users\chunpei.cheng\Documents\bonds_20180204.csv
 # Example 2 (Mac, Linux, Unix): /Users/chunpei.cheng/Documents/bonds.csv
-outputFilePath: ../bonds.csv
+outputFilePath: ../bonds.txt
 
 # processing/transaction fee
 # Example: 0.001425
