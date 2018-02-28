@@ -135,12 +135,15 @@ public class Bond {
      * <p>
      * Example: ROI / (2017/03/14 - 2017/02/28) * 365;
      */
-    public void setAnnualizedReturn(float roi, Date presentDate, Date putRightDate) {
-        int days = Apps.getDays(presentDate, putRightDate);
-        if (days > 0) {
-            annualizedReturn = roi / (float) days * (float) DAYS_YEAR;
+    public void setAnnualizedReturn(float roi, Date presentDate, Date putRightDate, Date dueDate) {
+        int p2pr = Apps.getDays(presentDate, putRightDate);
+        int p2du = Apps.getDays(presentDate, dueDate);
+
+        if (p2pr >= 0 || p2du >= 0) {
+            annualizedReturn = roi / (float) Math.max(p2pr, p2du) * (float) DAYS_YEAR;
         } else {
-            LOGGER.warn(String.format("# days '%s' between present date '%s' and due date '%s' is negative.", days, presentDate, putRightDate));
+            LOGGER.warn(String.format(" None of days (present '%s' to put right '%s') and (present '%s' to due '%s') are positive.",
+                    presentDate, putRightDate, presentDate, dueDate));
         }
     }
 

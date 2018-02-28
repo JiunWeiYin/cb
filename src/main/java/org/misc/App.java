@@ -164,11 +164,11 @@ public class App {
             float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE);
 
             if (closingPrice == Float.MIN_VALUE) {
-                LOGGER.warn(String.format("The closing price of '%s' is not a valid number '%s'. Skipped this record.",
-                        bondName, Apps.getValueAsString(td, CLOSING_PRICE)));
+                LOGGER.warn(String.format("The closing price '%s' of '%s' is an invalid number. Skipped this record.",
+                        Apps.getValueAsString(td, CLOSING_PRICE), bondName));
                 continue;
             } else if (closingPrice >= thrshd) {
-                LOGGER.warn(String.format("The closing price '%s' of '%s' is higher than user-defined threshold '%s'. Skipped this record.",
+                LOGGER.warn(String.format("The closing price '%s' of '%s' >= user-defined threshold '%s'. Skipped this record.",
                         closingPrice, bondName, thrshd));
                 continue;
             }
@@ -191,7 +191,7 @@ public class App {
             bonds.put(bondId, b);
         }
 
-        LOGGER.info("Processing daily bonds finished.");
+        LOGGER.info("Processing daily bonds finished.\n\n");
     }
 
     private static void processPublishedBond(String urlBondPublished, Map<String, Bond> bonds) throws Exception {
@@ -210,6 +210,8 @@ public class App {
                 LOGGER.error(String.format("Invalid file: the size of records and header is unidentical in '%s'. " +
                         "Is today a holiday? You may try running this program again during weekday.", urlBondPublished));
                 System.exit(5566);
+            } else {
+                extractCSVRecord(bonds, fstRd);
             }
         } else {
             LOGGER.error(String.format("Invalid CSV file downloaded from '%s'. " +
@@ -217,51 +219,56 @@ public class App {
             System.exit(5566);
         }
 
-        for (CSVRecord csvRecord : parser) {
-            LOGGER.debug(csvRecord.toString());
+        while (iCSVRd.hasNext()) {
+            CSVRecord fstRd = iCSVRd.next();
+            if (!isValid(fstRd, parser.getHeaderMap())) return;
 
-            String companyCode = csvRecord.get(0).trim();
-            if (companyCode.isEmpty()) return;
-
-            String bondId = csvRecord.get(2).trim(); // eg. 12581 or 49581E
-
-            if (bondId.isEmpty()) {
-                LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV is empty", bondId, companyCode));
-            } else if (!bonds.containsKey(bondId)) {
-                LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV cannot be found from the website of daily bonds.", bondId, companyCode));
-            } else {
-                LOGGER.debug(String.format("Bond ID '%s' of company code '%s' in the CSV was found from the website of daily bonds.", bondId, companyCode));
-
-                Bond idxB = bonds.get(bondId);
-                SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
-//                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
-                idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
-//                idxB.setAmount(Long.parseLong(csvRecord.get(8)));
-//                idxB.setBalance(Long.parseLong(csvRecord.get(9)));
-//                idxB.setCouponRate(Float.parseFloat(csvRecord.get(10)));
-
-                if (!csvRecord.get(30).trim().equals("0")) {
-                    idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
-
-                } else if (idxB.getDueDate() != null) {
-                    idxB.setPutRightDate(idxB.getDueDate());
-
-                } else {
-                    LOGGER.warn(String.format("Invalid format of Put Right Date '%s' of bond ID '%s' in the CSV.",
-                            csvRecord.get(30), bondId));
-                }
-
-                idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
-            }
+            extractCSVRecord(bonds, fstRd);
         }
 
-        LOGGER.info("Processing published bonds finished.");
+        LOGGER.info("Processing published bonds finished.\n\n");
     }
-
 
     // check if the size of records and header is identical
     private static boolean isValid(CSVRecord csvRd, Map<String, Integer> header) {
         return csvRd.size() == header.size();
+    }
+
+    private static void extractCSVRecord(Map<String, Bond> bonds, CSVRecord csvRecord) throws Exception {
+        LOGGER.debug(csvRecord.toString());
+
+        String companyCode = csvRecord.get(0).trim();
+        if (companyCode.isEmpty()) return;
+
+        String bondId = csvRecord.get(2).trim(); // eg. 12581 or 49581E
+
+        if (bondId.isEmpty()) {
+            LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV is empty.", bondId, companyCode));
+
+        } else if (!bonds.containsKey(bondId)) {
+            LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV cannot be found from the website of daily bonds.",
+                    bondId, companyCode));
+
+        } else {
+            LOGGER.debug(String.format("Bond ID '%s' of company code '%s' in the CSV was found from the website of daily bonds.",
+                    bondId, companyCode));
+
+            Bond idxB = bonds.get(bondId);
+            SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
+//                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
+            idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
+//                idxB.setAmount(Long.parseLong(csvRecord.get(8)));
+//                idxB.setBalance(Long.parseLong(csvRecord.get(9)));
+//                idxB.setCouponRate(Float.parseFloat(csvRecord.get(10)));
+            if (csvRecord.get(30).trim().equals("0") && idxB.getDueDate() != null) {
+                idxB.setPutRightDate(idxB.getDueDate());
+
+            } else {
+                idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
+            }
+
+            idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
+        }
     }
 
     private static void calculateValues(Map<String, Bond> bonds, float fee) {
@@ -274,11 +281,11 @@ public class App {
             }
 
             if (b.getRoi() != Float.NaN && b.getPresentDate() != null && b.getPutRightDate() != null) {
-                b.setAnnualizedReturn(b.getRoi(), b.getPresentDate(), b.getPutRightDate());
+                b.setAnnualizedReturn(b.getRoi(), b.getPresentDate(), b.getPutRightDate(), b.getDueDate());
             }
         }
 
-        LOGGER.info("Calculating processes finished.");
+        LOGGER.info("Calculating processes finished.\n\n");
     }
 
     private static void printResults(Map<String, Bond> bonds, String outputFilePath) throws Exception {
