@@ -122,8 +122,8 @@ public class Bond {
      *
      * Example:  (100 + (101.0025 - 100) * 0.9) / (90 * 1.001425);
      */
-    public void setRoi(float putRightPrice, float closingPrice) {
-        roi = (100f + (putRightPrice - 100f) * 0.9f) / (closingPrice * 1.001425f);
+    public void setRoi(float putRightPrice, float closingPrice, float fee) {
+        roi = (100.0f + (putRightPrice - 100.0f) * 0.9f) / (closingPrice * (1.0f + fee));
     }
 
     public float getRoi() {

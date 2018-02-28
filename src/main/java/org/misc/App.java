@@ -270,7 +270,7 @@ public class App {
             Bond b = bonds.get(key);
 
             if (b.getPutRightPrice() != Float.NaN && b.getClosingPrice() != 0.0f) {
-                b.setRoi(b.getPutRightPrice(), b.getClosingPrice());
+                b.setRoi(b.getPutRightPrice(), b.getClosingPrice(), fee);
             }
 
             if (b.getRoi() != Float.NaN && b.getPresentDate() != null && b.getPutRightDate() != null) {
