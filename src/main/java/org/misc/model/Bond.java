@@ -139,8 +139,8 @@ public class Bond {
         int p2pr = Apps.getDays(presentDate, putRightDate);
         int p2du = Apps.getDays(presentDate, dueDate);
 
-        if (p2pr >= 0 || p2du >= 0) {
-            annualizedReturn = roi / (float) Math.max(p2pr, p2du) * (float) DAYS_YEAR;
+        if (p2pr > 0 || p2du > 0) {
+            annualizedReturn = roi / (float) Math.min(p2pr, p2du) * (float) DAYS_YEAR;
         } else {
             LOGGER.warn(String.format(" None of days (present '%s' to put right '%s') and (present '%s' to due '%s') are positive.",
                     presentDate, putRightDate, presentDate, dueDate));
