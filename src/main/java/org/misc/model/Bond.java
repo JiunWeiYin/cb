@@ -167,8 +167,8 @@ public class Bond {
      *
      * @return float annualized return
      */
-    private float computeAnnualizedReturn(float roi, int duration) {
-        return (float) ((Math.pow(1.0 + (double) roi / 100.0, 1.0 / ((double) duration / (double) DAYS_YEAR)) - 1.0) * 100.0);
+    private float computeAnnualizedReturn(double roi, double duration) {
+        return (float) ((Math.pow(1.0 + roi / 100.0, 1.0 / (duration / (double) DAYS_YEAR)) - 1.0) * 100.0);
     }
 
     public float getAnnualizedReturn() {
