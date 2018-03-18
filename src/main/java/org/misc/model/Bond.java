@@ -146,11 +146,6 @@ public class Bond {
         return roi;
     }
 
-    /**
-     * Get annual return.
-     * <p>
-     * Example: ROI / (2017/03/14 - 2017/02/28) * 365;
-     */
     public void setAnnualizedReturn(float roi, Date presentDate, Date putRightDate, Date dueDate) {
         int p2pr = Apps.getDays(presentDate, putRightDate);
         int p2du = Apps.getDays(presentDate, dueDate);
@@ -158,13 +153,22 @@ public class Bond {
         int maxDays = Math.max(p2pr, p2du);
 
         if (minDays > 0) {
-            annualizedReturn = roi / (float) minDays * (float) DAYS_YEAR;
+            annualizedReturn = computeAnnualizedReturn(roi, minDays);
         } else if (maxDays > 0) {
-            annualizedReturn = roi / (float) Math.max(p2pr, p2du) * (float) DAYS_YEAR;
+            annualizedReturn = computeAnnualizedReturn(roi, maxDays);
         } else {
             LOGGER.warn(String.format(" None of days (present '%s' to put right '%s') and (present '%s' to due '%s') are positive.",
                     presentDate, putRightDate, presentDate, dueDate));
         }
+    }
+
+    /**
+     * Compute annualized return.
+     *
+     * @return float annualized return
+     */
+    private float computeAnnualizedReturn(float roi, int duration) {
+        return (float) ((Math.pow(1.0 + (double) roi / 100.0, 1.0 / ((double) duration / (double) DAYS_YEAR)) - 1.0) * 100.0);
     }
 
     public float getAnnualizedReturn() {
