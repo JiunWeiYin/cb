@@ -154,9 +154,13 @@ public class Bond {
     public void setAnnualizedReturn(float roi, Date presentDate, Date putRightDate, Date dueDate) {
         int p2pr = Apps.getDays(presentDate, putRightDate);
         int p2du = Apps.getDays(presentDate, dueDate);
+        int minDays = Math.min(p2pr, p2du);
+        int maxDays = Math.max(p2pr, p2du);
 
-        if (p2pr > 0 || p2du > 0) {
-            annualizedReturn = roi / (float) Math.min(p2pr, p2du) * (float) DAYS_YEAR;
+        if (minDays > 0) {
+            annualizedReturn = roi / (float) minDays * (float) DAYS_YEAR;
+        } else if (maxDays > 0) {
+            annualizedReturn = roi / (float) Math.max(p2pr, p2du) * (float) DAYS_YEAR;
         } else {
             LOGGER.warn(String.format(" None of days (present '%s' to put right '%s') and (present '%s' to due '%s') are positive.",
                     presentDate, putRightDate, presentDate, dueDate));
