@@ -257,8 +257,8 @@ public class App {
             SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
 //                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
             idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
-//                idxB.setAmount(Long.parseLong(csvRecord.get(8)));
-//                idxB.setBalance(Long.parseLong(csvRecord.get(9)));
+            idxB.setAmount(Long.parseLong(csvRecord.get(8)));
+            idxB.setBalance(Long.parseLong(csvRecord.get(9)));
 //                idxB.setCouponRate(Float.parseFloat(csvRecord.get(10)));
             if (csvRecord.get(30).trim().equals("0") && idxB.getDueDate() != null) {
                 idxB.setPutRightDate(idxB.getDueDate());

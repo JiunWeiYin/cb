@@ -52,8 +52,8 @@ public class Bond {
     Date putRightDate;
     Date dueDate;
     //    Date issuedDate;
-//    long amount;
-//    long balance;
+    long amount;
+    long balance;
 //    float couponRate;
     float putRightPrice;
 
@@ -117,13 +117,29 @@ public class Bond {
         this.putRightPrice = putRightPrice;
     }
 
+    public long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
+
+    public long getBalance() {
+        return balance;
+    }
+
+    public void setBalance(long balance) {
+        this.balance = balance;
+    }
+
     /**
      * Get ROI (Return Of Investment).
      *
      * Example:  (100 + (101.0025 - 100) * 0.9) / (90 * 1.001425);
      */
     public void setRoi(float putRightPrice, float closingPrice, float fee) {
-        roi = (100.0f + (putRightPrice - 100.0f) * 0.9f) / (closingPrice * (1.0f + fee));
+        roi = ((100.0f + (putRightPrice - 100.0f) * 0.9f) / (closingPrice * (1.0f + fee)) - 1.0f) * 100;
     }
 
     public float getRoi() {
