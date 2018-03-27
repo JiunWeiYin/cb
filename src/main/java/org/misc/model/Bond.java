@@ -42,7 +42,7 @@ public class Bond {
 //    float offerPrice;
 //    String dailyPricing;
 //    int boardLot;
-//    float ydayClosingPrice;
+    float ydayClosingPrice;
 //    float openingPrice;
 //    float dayHigh;
 //    float dayLow;
@@ -83,6 +83,14 @@ public class Bond {
 
     public void setClosingPrice(float closingPrice) {
         this.closingPrice = closingPrice;
+    }
+
+    public float getYdayClosingPrice() {
+        return ydayClosingPrice;
+    }
+
+    public void setYdayClosingPrice(float ydayClosingPrice) {
+        this.ydayClosingPrice = ydayClosingPrice;
     }
 
     public Date getPresentDate() {

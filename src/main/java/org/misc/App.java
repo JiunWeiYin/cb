@@ -162,6 +162,9 @@ public class App {
             String bondId = bond[0]; // eg. 12581 or 49581E
             String bondName = bond[1]; // eg. 其祥一KY
             float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE);
+            if (closingPrice == Float.MIN_VALUE) {
+                closingPrice = Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE);
+            }
 
             if (closingPrice == Float.MIN_VALUE) {
                 LOGGER.warn(String.format("The closing price '%s' of '%s' is an invalid number. Skipped this record.",

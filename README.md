@@ -1,1 +1,5 @@
-# misc
+# Compile
+    mvn clean package
+
+# Run
+        
