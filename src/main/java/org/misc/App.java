@@ -65,14 +65,13 @@ public class App {
         }
 
         float fee = config.getFee();
-        if (fee >= 0) {
-            LOGGER.info(String.format("fee: %s", fee));
-        }
+        LOGGER.info(String.format("fee: %s", fee));
+
+        float tax = config.getTax();
+        LOGGER.info(String.format("tax: %s", tax));
 
         float thrshd = config.getThresholdClosingPrice();
-        if (thrshd >= 0) {
-            LOGGER.info(String.format("thresholdClosingPrice: %s", thrshd));
-        }
+        LOGGER.info(String.format("thresholdClosingPrice: %s", thrshd));
 
         Map<String, Bond> bonds = new HashMap<>();
 
@@ -80,7 +79,7 @@ public class App {
 
         processPublishedBond(urlBondPublished, bonds);
 
-        calculateValues(bonds, fee);
+        calculateValues(bonds, fee, tax);
 
         printResults(bonds, config.getOutputFilePath());
 
@@ -278,7 +277,7 @@ public class App {
         }
     }
 
-    private static void calculateValues(Map<String, Bond> bonds, float fee) {
+    private static void calculateValues(Map<String, Bond> bonds, float fee, float tax) {
 
         for (String key : bonds.keySet()) {
             Bond b = bonds.get(key);
@@ -289,6 +288,10 @@ public class App {
 
             if (b.getRoi() != Float.NaN && b.getPresentDate() != null && b.getPutRightDate() != null) {
                 b.setAnnualizedReturn(b.getRoi(), b.getPresentDate(), b.getPutRightDate(), b.getDueDate());
+            }
+
+            if (b.getPutRightPrice() != Float.NaN) {
+                b.setEarlyOutPrice(b.getPutRightPrice(), tax);
             }
         }
 

@@ -22,8 +22,12 @@ outputFilePath: ../bonds.txt
 # Example: 0.001425
 fee: 0.001425
 
+# interest tax
+# Example: 0.1
+tax: 0.1
+
 # For those who have closing prices higher than the threshold, they will be filtered out.
-# Example: 100.0
-thresholdClosingPrice: 100.0
+# Example: 100.00
+thresholdClosingPrice: 100.00
 
 

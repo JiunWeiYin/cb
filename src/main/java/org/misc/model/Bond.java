@@ -143,21 +143,13 @@ public class Bond {
         this.balance = balance;
     }
 
-    public float getEarlyOutPrice() {
-        return earlyOutPrice;
-    }
-
-    public void setEarlyOutPrice(float earlyOutPrice) {
-        this.earlyOutPrice = earlyOutPrice;
-    }
-
     /**
      * Get ROI (Return Of Investment).
      *
-     * Example:  (100 + (101.0025 - 100) * 0.9) / (90 * 1.001425);
+     * Example:  (((100 + (101.0025 - 100) * 90%) / (90 * 1.001425)) - 1) * 100
      */
     public void setRoi(float putRightPrice, float closingPrice, float fee) {
-        roi = ((100.0f + (putRightPrice - 100.0f) * 0.9f) / (closingPrice * (1.0f + fee)) - 1.0f) * 100;
+        this.roi = ((100.0f + (putRightPrice - 100.0f) * 0.9f) / (closingPrice * (1.0f + fee)) - 1.0f) * 100;
     }
 
     public float getRoi() {
@@ -171,13 +163,27 @@ public class Bond {
         int maxDays = Math.max(p2pr, p2du);
 
         if (minDays > 0) {
-            annualizedReturn = computeAnnualizedReturn(roi, minDays);
+            this.annualizedReturn = computeAnnualizedReturn(roi, minDays);
         } else if (maxDays > 0) {
-            annualizedReturn = computeAnnualizedReturn(roi, maxDays);
+            this.annualizedReturn = computeAnnualizedReturn(roi, maxDays);
         } else {
             LOGGER.warn(String.format(" None of days (present '%s' to put right '%s') and (present '%s' to due '%s') are positive.",
                     presentDate, putRightDate, presentDate, dueDate));
         }
+    }
+
+    public float getEarlyOutPrice() {
+        return earlyOutPrice;
+    }
+
+    /**
+     * Compute price for early out. Only supports Example 1.
+     * <p>
+     * Example 1 (# bonds  < 20,000): ((101 - 100) * (1 -    10%) + 100) * 1.001425
+     * Example 2 (# bonds >= 20,000): ((101 - 100) * (1 - 11.91%) + 100) * 1.001425
+     */
+    public void setEarlyOutPrice(float putRightPrice, float tax) {
+        this.earlyOutPrice = ((putRightPrice - 100f) * (1f - tax) + 100f) * 1.001425f;
     }
 
     /**
