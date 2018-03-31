@@ -270,7 +270,11 @@ public class App {
                 idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
             }
 
-            idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
+            if (idxB.getPutRightDate().getTime() - idxB.getPresentDate().getTime() >= 0) {
+                idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
+            } else {
+                idxB.setPutRightPrice(100f);
+            }
         }
     }
 
