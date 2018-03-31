@@ -61,6 +61,7 @@ public class Bond {
     // calculated values
     float roi;
     float annualizedReturn;
+    float earlyOutPrice;
 
     public String getBondId() {
         return bondId;
@@ -140,6 +141,14 @@ public class Bond {
 
     public void setBalance(long balance) {
         this.balance = balance;
+    }
+
+    public float getEarlyOutPrice() {
+        return earlyOutPrice;
+    }
+
+    public void setEarlyOutPrice(float earlyOutPrice) {
+        this.earlyOutPrice = earlyOutPrice;
     }
 
     /**
