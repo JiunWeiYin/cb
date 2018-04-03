@@ -223,7 +223,7 @@ public class Bond {
                 "put_right_price\t" +
                 "ROI\t" +
                 "annualized_return\t" +
-                "earlyOutPrice\n";
+                "early_out_price\n";
     }
 
     @Override
