@@ -19,8 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -41,7 +39,6 @@ import java.util.Date;
 import static org.misc.constant.ConstVar.*;
 
 public class Apps {
-    private static final Logger LOGGER = LogManager.getLogger(Apps.class);
 
     /**
      * Loads YAML configurations.
@@ -55,7 +52,6 @@ public class Apps {
             config = mapper.readValue(is, Configuration.class);
 
         } catch (IOException ex) {
-            LOGGER.debug(String.format("IOException: '%s'.", ex.getMessage()));
             throw new IOException(ex.getMessage());
         }
 
@@ -97,9 +93,7 @@ public class Apps {
                 break;
 
             default:
-                LOGGER.debug(String.format("The attribute '%s' does not exist.", attribute));
                 break;
-
         }
 
         return element;
@@ -156,7 +150,6 @@ public class Apps {
      */
     public static BufferedReader readAsBufferedReader(String url) throws IOException {
         InputStreamReader isr = new InputStreamReader(new URL(url).openStream(), BIG5);
-        LOGGER.debug(String.format("The encoding type is %s.", isr.getEncoding()));
         return new BufferedReader(isr);
     }
 
@@ -176,8 +169,17 @@ public class Apps {
      * @return Date
      */
     public static Date formatDate(String dateInString, SimpleDateFormat formatter) throws ParseException {
-        LOGGER.debug(String.format("The data-in-string is %s.", dateInString));
         return formatter.parse(dateInString);
+    }
+
+    /**
+     * Convert Date to String. eg. 2017/02/28
+     *
+     * @return Date
+     */
+    public static String printDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        return formatter.format(date);
     }
 
     /**
@@ -186,8 +188,6 @@ public class Apps {
      * @return int
      */
     public static int getDays(Date start, Date end) {
-        LOGGER.debug(String.format("The start date is %s.", start));
-        LOGGER.debug(String.format("The end date %s.", end));
         return (int) ((end.getTime() - start.getTime()) / (1000 * 24 * 60 * 60));
     }
 

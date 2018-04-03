@@ -17,8 +17,6 @@
 package org.misc.model;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.misc.util.Apps;
@@ -213,27 +211,42 @@ public class Bond {
                 dateFormat.format(dueDate));
     }
 
-//    public String toString() {
-//        return "bondName: " + bondName +
-//                "; time: " + time +
-//                "; closingPrice: " + closingPrice +
-//                "; bidPrice: " + bidPrice +
-//                "; offerPrice: " + offerPrice +
-//                "; dailyPricing: " + dailyPricing +
-//                "; boardLot: " + boardLot +
-//                "; ydayClosingPrice: " + ydayClosingPrice +
-//                "; openingPrice: " + openingPrice +
-//                "; dayHigh: " + dayHigh +
-//                "; dayLow: " + dayLow +
-//                "; presentDate: " + presentDate +
-//                "; putRightPrice: " + putRightPrice
-//                ;
-//    }
+    public String printHeader() {
+        return "bond_id\t" +
+                "bond_name\t" +
+                "closing_price\t" +
+                "present_date\t" +
+                "put_right_date\t" +
+                "due_date\t" +
+                "amount\t" +
+                "balance\t" +
+                "put_right_price\t" +
+                "ROI\t" +
+                "annualized_return\t" +
+                "earlyOutPrice\n";
+    }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                bondId,
+                bondName,
+                closingPrice,
+                Apps.printDate(presentDate),
+                Apps.printDate(putRightDate),
+                Apps.printDate(dueDate),
+                amount,
+                balance,
+                putRightPrice,
+                roi,
+                annualizedReturn,
+                earlyOutPrice);
     }
+
+//    @Override
+//    public String toString() {
+//        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
+//    }
 
     @Override
     public boolean equals(Object obj) {

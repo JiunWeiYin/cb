@@ -31,8 +31,6 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -302,33 +300,22 @@ public class App {
         LOGGER.info("Writing results.");
         Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFilePath), StandardCharsets.UTF_8));
         Iterator<String> iter = bonds.keySet().iterator();
-        StringBuilder header = new StringBuilder();
         String firstKey;
 
         if (iter.hasNext()) {
-
             firstKey = iter.next();
-            for (Field field : bonds.get(firstKey).getClass().getDeclaredFields()) {
-                if (!header.toString().isEmpty()) {
-                    header.append(",");
-                }
-                if (!Modifier.isStatic(field.getModifiers())) {
-                    header.append(field.getName());
-                }
-            }
         } else {
             LOGGER.error("There is no any bonds available for further discussion.");
             throw new RuntimeException("There is no any bonds available for further discussion.");
         }
 
-        String fmtHeader = header.append("\n").toString().replace(",", "\t");
-        w.write(fmtHeader);
+        w.write(bonds.get(firstKey).printHeader());
 
-        String oLine = bonds.get(firstKey).toString().replace(",", "\t").concat("\n");
+        String oLine = bonds.get(firstKey).toString();
         w.write(oLine);
 
         while (iter.hasNext()) {
-            oLine = bonds.get(iter.next()).toString().replace(",", "\t").concat("\n");
+            oLine = bonds.get(iter.next()).toString();
             w.write(oLine);
         }
 
