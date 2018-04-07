@@ -21,12 +21,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.misc.util.Apps;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.misc.constant.ConstVar.DAYS_YEAR;
-import static org.misc.constant.ConstVar.MY_FORMATTER;
 
 public class Bond {
     private static final Logger LOGGER = LogManager.getLogger(Bond.class);
@@ -144,7 +141,7 @@ public class Bond {
     /**
      * Get ROI (Return Of Investment).
      *
-     * Example:  (((100 + (101.0025 - 100) * 90%) / (90 * 1.001425)) - 1) * 100
+     * Example: in:90,out:101.0025,fee:0.001425,ROI:(((100 + (101.0025 - 100) * (1 - 10%)) / (90 * 1.001425)) - 1) * 100
      */
     public void setRoi(float putRightPrice, float closingPrice, float fee) {
         this.roi = ((100.0f + (putRightPrice - 100.0f) * 0.9f) / (closingPrice * (1.0f + fee)) - 1.0f) * 100;
@@ -177,8 +174,8 @@ public class Bond {
     /**
      * Compute price for early out. Only supports Example 1.
      * <p>
-     * Example 1 (# bonds  < 20,000): ((101 - 100) * (1 -    10%) + 100) * 1.001425
-     * Example 2 (# bonds >= 20,000): ((101 - 100) * (1 - 11.91%) + 100) * 1.001425
+     * Example 1 (# bonds  < 20,000): tax:10%,   EOP:((101 - 100) * (1 -    10%) + 100) * 1.001425
+     * Example 2 (# bonds >= 20,000): tax:11.91%,EOP:((101 - 100) * (1 - 11.91%) + 100) * 1.001425
      */
     public void setEarlyOutPrice(float putRightPrice, float tax) {
         this.earlyOutPrice = ((putRightPrice - 100f) * (1f - tax) + 100f) * 1.001425f;
@@ -195,20 +192,6 @@ public class Bond {
 
     public float getAnnualizedReturn() {
         return annualizedReturn;
-    }
-
-    /**
-     * Output as a line.
-     * <p>
-     * Example: 36626   78.25   2017/02/28  2019/03/02  0.27795526  0.13878752
-     */
-    public String toLine() {
-        DateFormat dateFormat = new SimpleDateFormat(MY_FORMATTER);
-        return String.format("%s\t%s\t%s\t%s",
-                bondName,
-                closingPrice,
-                dateFormat.format(presentDate),
-                dateFormat.format(dueDate));
     }
 
     public String printHeader() {
@@ -242,11 +225,6 @@ public class Bond {
                 annualizedReturn,
                 earlyOutPrice);
     }
-
-//    @Override
-//    public String toString() {
-//        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
-//    }
 
     @Override
     public boolean equals(Object obj) {
