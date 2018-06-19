@@ -3,7 +3,7 @@
  * Contact: ccp0625@gmail.com
  */
 
-package org.misc;
+package org.lcb;
 
 public class AppTest {
 }

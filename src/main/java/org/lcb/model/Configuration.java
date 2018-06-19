@@ -13,19 +13,24 @@
  *
  **/
 
-package org.misc.model;
+package org.lcb.model;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Configuration {
+
+
     private String urlBondDaily;
     private String urlBondPublished;
     private String outputFilePath;
     private float fee;
     private float tax;
     private float thresholdClosingPrice;
+
+    // profile
+    private String urlCash;
 
     public String getUrlBondDaily() {
         return urlBondDaily;
@@ -49,6 +54,10 @@ public class Configuration {
 
     public float getThresholdClosingPrice() {
         return thresholdClosingPrice;
+    }
+
+    public String getUrlCash() {
+        return urlCash;
     }
 
     @Override

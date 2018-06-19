@@ -14,9 +14,9 @@ urlBondDaily: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.963242
 urlBondPublished: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv
 
 # path of output file in CSV format (https://en.wikipedia.org/wiki/Comma-separated_values)
-# Example 1 (Windows): D:\Users\chunpei.cheng\Documents\bonds.txt
-# Example 2 (Mac, Linux, Unix): /Users/chunpei.cheng/Documents/bonds.txt
-outputFilePath: ../bonds.txt
+# Example 1 (Windows): D:\Users\chunpei.cheng\Documents\lcb.txt
+# Example 2 (Mac, Linux, Unix): /Users/chunpei.cheng/Documents/lcb.txt
+outputFilePath: ../lcb.txt
 
 # processing/transaction fee
 # Example: 0.001425
@@ -29,5 +29,10 @@ tax: 0.1
 # For those who have closing prices higher than the threshold, they will be filtered out.
 # Example: 100.00
 thresholdClosingPrice: 100.00
+
+# url of fixed assets and long-term investments
+# Example: http://fund.bot.com.tw/z/zc/zcp/zcpa/zcpa0.djhtm?b=Y&a=4804
+urlCash: http://fund.bot.com.tw/z/zc/zcp/zcpa/zcpa0.djhtm?b=Y&a=%s
+
 
 

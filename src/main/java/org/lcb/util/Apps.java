@@ -13,7 +13,7 @@
  *
  **/
 
-package org.misc.util;
+package org.lcb.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -23,8 +23,8 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.misc.constant.ConstVar;
-import org.misc.model.Configuration;
+import org.lcb.constant.ConstVar;
+import org.lcb.model.Configuration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.misc.constant.ConstVar.*;
+import static org.lcb.constant.ConstVar.*;
 
 public class Apps {
 
@@ -124,6 +124,15 @@ public class Apps {
     }
 
     /**
+     * Gets value as a String format.
+     *
+     * @return String
+     */
+    public static String getValueAsString(Elements elements, int index) {
+        return elements.get(index).text().trim();
+    }
+
+    /**
      * Gets value as a float format.
      *
      * @return float
@@ -139,8 +148,27 @@ public class Apps {
      * @return int
      */
     public static int getValueAsInt(Elements elements, String feature) {
-        String val = elements.get(FEATURE.valueOf(feature).ordinal()).text();
+        String val;
+        try {
+            val = elements.get(FEATURE.valueOf(feature).ordinal()).text();
+        } catch (Exception e) {
+            val = "";
+        }
         return val.equals(PLACEHOLDER) ? Integer.MIN_VALUE : Integer.parseInt(val.replace(",", ""));
+    }
+    /**
+     * Gets value as a int format.
+     *
+     * @return float
+     */
+    public static float getValueAsInt(Elements elements, int index) {
+        String val;
+        try {
+            val = elements.get(index).text().trim();
+        } catch (Exception e) {
+            val = "";
+        }
+        return val.isEmpty() || val.equals(PLACEHOLDER) ? 0 : Integer.parseInt(val.replace(",", ""));
     }
 
     /**

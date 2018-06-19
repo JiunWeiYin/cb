@@ -1,3 +1,3 @@
 @echo OFF
-java -Dlog4j2.configurationFile=../src/main/resources/log4j2_debug.xml -jar ../target/misc-0.1.jar ../config.yml
+java -Dlog4j2.configurationFile=../src/main/resources/log4j2_debug.xml -jar ../target/lcb-0.1.jar ../config.yml
 pause

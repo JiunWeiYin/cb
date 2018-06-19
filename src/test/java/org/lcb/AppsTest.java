@@ -3,7 +3,7 @@
  * Contact: ccp0625@gmail.com
  */
 
-package org.misc;
+package org.lcb;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -12,8 +12,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.misc.model.Configuration;
-import org.misc.util.Apps;
+import org.lcb.model.Configuration;
+import org.lcb.util.Apps;
 
 import java.io.IOException;
 import java.text.ParseException;

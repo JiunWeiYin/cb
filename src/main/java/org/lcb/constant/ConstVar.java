@@ -13,7 +13,7 @@
  *
  **/
 
-package org.misc.constant;
+package org.lcb.constant;
 
 public class ConstVar {
     public static final int TIME_OUT = 12000;
@@ -53,6 +53,11 @@ public class ConstVar {
     public static final String MY_FORMATTER = "yyyy/MM/dd";
     public static final int DAYS_YEAR = 365;
 
+    // profile
+    public static final String T01 = "t01";
+    public static final String CASH_1 = "現金及約當現金";
+    public static final String CASH_2 = "應收帳款及票據";
+
 
 
     public enum FEATURE {
@@ -69,6 +74,4 @@ public class ConstVar {
         dayHigh,
         dayLow,
     }
-
-
 }

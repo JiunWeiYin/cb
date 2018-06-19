@@ -13,7 +13,7 @@
  *
  **/
 
-package org.misc;
+package org.lcb;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -23,9 +23,9 @@ import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.misc.model.Bond;
-import org.misc.model.Configuration;
-import org.misc.util.Apps;
+import org.lcb.model.Bond;
+import org.lcb.model.Configuration;
+import org.lcb.util.Apps;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -33,12 +33,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-import static org.misc.constant.ConstVar.*;
+import static org.lcb.constant.ConstVar.*;
 
 public class App {
     private static final Logger LOGGER = LogManager.getLogger(App.class);
@@ -71,11 +68,18 @@ public class App {
         float thrshd = config.getThresholdClosingPrice();
         LOGGER.info(String.format("thresholdClosingPrice: %s", thrshd));
 
+        String urlCash = config.getUrlCash();
+        if (urlCash != null) {
+            LOGGER.info(String.format("url of cash: %s", urlCash));
+        }
+
         Map<String, Bond> bonds = new HashMap<>();
 
         processDailyBond(urlBondDaily, bonds, thrshd);
 
         processPublishedBond(urlBondPublished, bonds);
+
+        processCash(urlCash, bonds);
 
         calculateValues(bonds, fee, tax);
 
@@ -227,6 +231,95 @@ public class App {
         }
 
         LOGGER.info("Processing published bonds finished.\n\n");
+    }
+
+    private static void processCash(String url, Map<String, Bond> bonds) throws Exception {
+        if (bonds.isEmpty()) {
+            LOGGER.warn("Since there is no bonds, skip processing cash");
+            return;
+        }
+
+        for(String idxBondId : bonds.keySet()) {
+            LOGGER.debug(String.format("idxBondId: %s", idxBondId));
+
+            String formattedUrl = String.format(url, idxBondId);
+            LOGGER.debug(String.format("formattedUrl: %s", formattedUrl));
+
+            Connection conn = Apps.getConnection(formattedUrl, USER_AGENT, REFERRER, TIME_OUT);
+            if (conn != null) {
+                LOGGER.info(String.format("Verifying the connection: %s", formattedUrl));
+            }
+
+            // execute connection
+            Connection.Response resp = conn.execute();
+            if (resp != null) {
+                LOGGER.info("The connection has been established.");
+            }
+
+            // get connection response status code
+            if (resp.statusCode() != 200) {
+                LOGGER.error(String.format("The connection response status code is %s. " +
+                        "Please check if the internet is working.", resp.statusCode()));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("The connection response status code is %s.", resp.statusCode()));
+
+            // convert HTML to doc
+            Document doc = conn.get();
+            LOGGER.debug("The HTML has been loaded as a Document object.");
+
+            // select all <table>
+            Elements tables = doc.select(TABLE);
+            if (tables.size() <= 0) {
+                LOGGER.error(String.format("<%s> was not found.", TABLE));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got all <%s>.", TABLE));
+
+            // get a specific <table>
+            Element table = Apps.searchTable(tables, CLASS, T01);
+            if (table == null) {
+                LOGGER.error(String.format("<%s %s=%s> was not found.", TABLE, CLASS, T01));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got the <%s %s=%s>.", TABLE, CLASS, T01));
+
+            // get all <tr>
+            Elements tr = table.select(TR);
+            if (tr.isEmpty()) {
+                LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TR, formattedUrl));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got the <%s>.", TR));
+
+            // check if <td> is present
+            if (tr.select(TD).isEmpty()) {
+                LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TD, formattedUrl));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got the <%s>.", TD));
+
+            // get the first index of <td>
+            int idxRecord = Apps.indexOfRecord(tr, TD);
+            LOGGER.debug(String.format("The first index of <%s> is %s.", TD, idxRecord));
+
+            int cashTotal = 0;
+            for (int i = idxRecord; i < tr.size(); i++) {
+                Elements td = tr.get(i).select(TD);
+                String rowTypeVal = Apps.getValueAsString(td, 0);
+
+                if (rowTypeVal.startsWith(CASH_1) || rowTypeVal.startsWith(CASH_2)) {
+                    LOGGER.debug(String.format("rowTypeVal: %s", rowTypeVal));
+                    cashTotal += Apps.getValueAsInt(td, 1);
+                    LOGGER.info(String.format("cashTotal: %s", cashTotal));
+                }
+            }
+
+            Bond idxB = bonds.get(idxBondId);
+            idxB.setCash(cashTotal);
+        }
+
+        LOGGER.info("Processing url of cash finished.\n");
     }
 
     // check if the size of records and header is identical

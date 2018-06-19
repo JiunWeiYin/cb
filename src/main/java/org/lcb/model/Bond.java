@@ -13,17 +13,16 @@
  *
  **/
 
-
-package org.misc.model;
+package org.lcb.model;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.misc.util.Apps;
+import org.lcb.util.Apps;
 
 import java.util.Date;
 
-import static org.misc.constant.ConstVar.DAYS_YEAR;
+import static org.lcb.constant.ConstVar.DAYS_YEAR;
 
 public class Bond {
     private static final Logger LOGGER = LogManager.getLogger(Bond.class);
@@ -57,6 +56,9 @@ public class Bond {
     float roi;
     float annualizedReturn;
     float earlyOutPrice;
+
+    // profile
+    int cash;
 
     public String getBondId() {
         return bondId;
@@ -138,6 +140,14 @@ public class Bond {
         this.balance = balance;
     }
 
+    public int getCash() {
+        return cash;
+    }
+
+    public void setCash(int cash) {
+        this.cash = cash;
+    }
+
     /**
      * Get ROI (Return Of Investment).
      *
@@ -206,12 +216,13 @@ public class Bond {
                 "put_right_price\t" +
                 "ROI\t" +
                 "annualized_return\t" +
-                "early_out_price\n";
+                "early_out_price\t" +
+                "cash\n";
     }
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                 bondId,
                 bondName,
                 closingPrice,
@@ -223,7 +234,9 @@ public class Bond {
                 putRightPrice,
                 roi,
                 annualizedReturn,
-                earlyOutPrice);
+                earlyOutPrice,
+                cash
+        );
     }
 
     @Override
