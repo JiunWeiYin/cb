@@ -242,7 +242,7 @@ public class App {
         for(String idxBondId : bonds.keySet()) {
             LOGGER.debug(String.format("idxBondId: %s", idxBondId));
 
-            String formattedUrl = String.format(url, idxBondId);
+            String formattedUrl = String.format(url, idxBondId.substring(0, 4));
             LOGGER.debug(String.format("formattedUrl: %s", formattedUrl));
 
             Connection conn = Apps.getConnection(formattedUrl, USER_AGENT, REFERRER, TIME_OUT);
@@ -307,11 +307,11 @@ public class App {
             for (int i = idxRecord; i < tr.size(); i++) {
                 Elements td = tr.get(i).select(TD);
                 String rowTypeVal = Apps.getValueAsString(td, 0);
+                LOGGER.debug(String.format("rowTypeVal: %s", rowTypeVal));
 
-                if (rowTypeVal.startsWith(CASH_1) || rowTypeVal.startsWith(CASH_2)) {
-                    LOGGER.debug(String.format("rowTypeVal: %s", rowTypeVal));
+                if (rowTypeVal.endsWith(CASH_1) || rowTypeVal.endsWith(CASH_2)) {
                     cashTotal += Apps.getValueAsInt(td, 1);
-                    LOGGER.info(String.format("cashTotal: %s", cashTotal));
+                    LOGGER.debug(String.format("cashTotal: %s", cashTotal));
                 }
             }
 
