@@ -316,7 +316,7 @@ public class App {
             }
 
             Bond idxB = bonds.get(idxBondId);
-            idxB.setCash(cashTotal);
+            idxB.setCash(cashTotal * 1000000L);
         }
 
         LOGGER.info("Processing url of cash finished.\n");

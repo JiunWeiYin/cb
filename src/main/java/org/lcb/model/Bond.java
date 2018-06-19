@@ -58,7 +58,7 @@ public class Bond {
     float earlyOutPrice;
 
     // profile
-    int cash;
+    long cash;
 
     public String getBondId() {
         return bondId;
@@ -140,11 +140,11 @@ public class Bond {
         this.balance = balance;
     }
 
-    public int getCash() {
+    public long getCash() {
         return cash;
     }
 
-    public void setCash(int cash) {
+    public void setCash(long cash) {
         this.cash = cash;
     }
 
