@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org</groupId>
-    <artifactId>lcb</artifactId>
+    <artifactId>cb</artifactId>
     <version>0.1</version>
     <packaging>jar</packaging>
 
@@ -130,7 +130,7 @@
                                 <!-- sets entries in the MANIFEST -->
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.lcb.App</mainClass>
+                                    <mainClass>org.cb.App</mainClass>
                                 </transformer>
                                 <!-- prevents license duplication -->
                                 <transformer

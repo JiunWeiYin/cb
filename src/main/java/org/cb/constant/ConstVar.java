@@ -13,7 +13,7 @@
  *
  **/
 
-package org.lcb.constant;
+package org.cb.constant;
 
 public class ConstVar {
     public static final int TIME_OUT = 12000;

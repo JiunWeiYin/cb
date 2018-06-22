@@ -13,7 +13,7 @@
  *
  **/
 
-package org.lcb;
+package org.cb;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -23,9 +23,9 @@ import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.lcb.model.Bond;
-import org.lcb.model.Configuration;
-import org.lcb.util.Apps;
+import org.cb.model.Bond;
+import org.cb.model.Configuration;
+import org.cb.util.Apps;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.lcb.constant.ConstVar.*;
+import static org.cb.constant.ConstVar.*;
 
 public class App {
     private static final Logger LOGGER = LogManager.getLogger(App.class);

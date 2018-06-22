@@ -13,7 +13,7 @@
  *
  **/
 
-package org.lcb.util;
+package org.cb.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -23,8 +23,8 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.lcb.constant.ConstVar;
-import org.lcb.model.Configuration;
+import org.cb.constant.ConstVar;
+import org.cb.model.Configuration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.lcb.constant.ConstVar.*;
+import static org.cb.constant.ConstVar.*;
 
 public class Apps {
 

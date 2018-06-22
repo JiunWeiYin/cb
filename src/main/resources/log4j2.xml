@@ -4,8 +4,8 @@
         <Console name="stdout" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} ----- %p %m%n"/>
         </Console>
-        <RollingFile name="rolling" fileName="../logs/etl-client.log"
-                     filePattern="logs/$${date:yyyy-MM}/etl-client-%d{MM-dd-yyyy}-%i.log.gz">
+        <RollingFile name="rolling" fileName="../logs/cb.log"
+                     filePattern="logs/$${date:yyyy-MM}/cb-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ----- %p %m%n</Pattern>
             </PatternLayout>
