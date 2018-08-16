@@ -30,9 +30,18 @@ tax: 0.1
 # Example: 100.00
 thresholdClosingPrice: 100.00
 
+# 還本價
+returnPrice: 100.00
+
 # url of fixed assets and long-term investments
 # Example: http://fund.bot.com.tw/z/zc/zcp/zcpa/zcpa0.djhtm?b=Y&a=4804
 urlCash: http://fund.bot.com.tw/z/zc/zcp/zcpa/zcpa0.djhtm?b=Y&a=%s
+
+
+
+
+
+
 
 
 

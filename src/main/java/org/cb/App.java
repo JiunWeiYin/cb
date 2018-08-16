@@ -65,6 +65,9 @@ public class App {
         float tax = config.getTax();
         LOGGER.info(String.format("tax: %s", tax));
 
+        float returnPrice = config.getReturnPrice();
+        LOGGER.info(String.format("returnPrice: %s", returnPrice));
+
         float thrshd = config.getThresholdClosingPrice();
         LOGGER.info(String.format("thresholdClosingPrice: %s", thrshd));
 
@@ -77,7 +80,7 @@ public class App {
 
         processDailyBond(urlBondDaily, bonds, thrshd);
 
-        processPublishedBond(urlBondPublished, bonds);
+        processPublishedBond(urlBondPublished, bonds, returnPrice);
 
         processCash(urlCash, bonds);
 
@@ -95,6 +98,7 @@ public class App {
         if (conn != null) {
             LOGGER.info(String.format("Verifying the connection: %s", urlBondDaily));
         }
+        conn.timeout(60000);
 
         // execute connection
         Connection.Response resp = conn.execute();
@@ -198,7 +202,7 @@ public class App {
         LOGGER.info("Processing daily bonds finished.\n\n");
     }
 
-    private static void processPublishedBond(String urlBondPublished, Map<String, Bond> bonds) throws Exception {
+    private static void processPublishedBond(String urlBondPublished, Map<String, Bond> bonds, float returnPrice) throws Exception {
 
         LOGGER.info(String.format("Verifying the connection: %s", urlBondPublished));
         CSVParser parser = Apps.readAsCSVParser(urlBondPublished);
@@ -215,7 +219,7 @@ public class App {
                         "Is today a holiday? You may try running this program again during weekday.", urlBondPublished));
                 System.exit(5566);
             } else {
-                extractCSVRecord(bonds, fstRd);
+                extractCSVRecord(bonds, fstRd, returnPrice);
             }
         } else {
             LOGGER.error(String.format("Invalid CSV file downloaded from '%s'. " +
@@ -227,7 +231,7 @@ public class App {
             CSVRecord fstRd = iCSVRd.next();
             if (!isValid(fstRd, parser.getHeaderMap())) return;
 
-            extractCSVRecord(bonds, fstRd);
+            extractCSVRecord(bonds, fstRd, returnPrice);
         }
 
         LOGGER.info("Processing published bonds finished.\n\n");
@@ -327,7 +331,7 @@ public class App {
         return csvRd.size() == header.size();
     }
 
-    private static void extractCSVRecord(Map<String, Bond> bonds, CSVRecord csvRecord) throws Exception {
+    private static void extractCSVRecord(Map<String, Bond> bonds, CSVRecord csvRecord, float returnPrice) throws Exception {
         LOGGER.debug(csvRecord.toString());
 
         String companyCode = csvRecord.get(0).trim();
@@ -361,9 +365,9 @@ public class App {
             }
 
             if (idxB.getPutRightDate().getTime() - idxB.getPresentDate().getTime() >= 0) {
-                idxB.setPutRightPrice(Float.parseFloat(csvRecord.get(31)));
+                idxB.setPutRightPrice(Math.max(Float.parseFloat(csvRecord.get(31)), returnPrice));
             } else {
-                idxB.setPutRightPrice(100f);
+                idxB.setPutRightPrice(returnPrice);
             }
         }
     }

@@ -28,6 +28,7 @@ public class Configuration {
     private float fee;
     private float tax;
     private float thresholdClosingPrice;
+    private float returnPrice;
 
     // profile
     private String urlCash;
@@ -54,6 +55,10 @@ public class Configuration {
 
     public float getThresholdClosingPrice() {
         return thresholdClosingPrice;
+    }
+
+    public float getReturnPrice() {
+        return returnPrice;
     }
 
     public String getUrlCash() {
