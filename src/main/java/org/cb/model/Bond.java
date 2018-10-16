@@ -207,7 +207,7 @@ public class Bond {
     public String printHeader() {
         return  "代碼\t" +
                 "名稱\t" +
-                "收盤價\t" +
+                "成交價\t" +
                 "今日日期\t" +
                 "賣回權日期\t" +
                 "到期日期\t" +
