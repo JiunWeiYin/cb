@@ -207,7 +207,7 @@ public class Apps {
      */
     public static String printDate(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        return formatter.format(date);
+        return date == null ? null : formatter.format(date);
     }
 
     /**

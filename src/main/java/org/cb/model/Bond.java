@@ -205,19 +205,19 @@ public class Bond {
     }
 
     public String printHeader() {
-        return "bond_id\t" +
-                "bond_name\t" +
-                "closing_price\t" +
-                "present_date\t" +
-                "put_right_date\t" +
-                "due_date\t" +
-                "amount\t" +
-                "balance\t" +
-                "put_right_price\t" +
-                "ROI\t" +
-                "annualized_return\t" +
-                "early_out_price\t" +
-                "cash\n";
+        return  "代碼\t" +
+                "名稱\t" +
+                "收盤價\t" +
+                "今日日期\t" +
+                "賣回權日期\t" +
+                "到期日期\t" +
+                "發行總額\t" +
+                "目前餘額\t" +
+                "賣回權價格\t" +
+                "報酬率\t" +
+                "年化報酬率\t" +
+                "提早獲利價格\t" +
+                "公司現金\n";
     }
 
     @Override
