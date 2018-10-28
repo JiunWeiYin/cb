@@ -32,8 +32,10 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.cb.constant.ConstVar.*;
 
@@ -164,8 +166,8 @@ public class App {
             Elements td = tr.get(i).select(TD);
 
             String[] bond = Apps.getValueAsString(td, BOND).split(SEPERATOR_SPACE);
-            String bondId = bond[0]; // eg. 12581 or 49581E
-            String bondName = bond[1]; // eg. 其祥一KY
+            String id = bond[0]; // eg. 12581 or 49581E
+            String name = bond[1]; // eg. 其祥一KY
             float closingPrice = Apps.getValueAsFloat(td, CLOSING_PRICE);
             if (closingPrice == Float.MIN_VALUE) {
                 closingPrice = Apps.getValueAsFloat(td, YDAY_CLOSING_PRICE);
@@ -173,17 +175,17 @@ public class App {
 
             if (closingPrice == Float.MIN_VALUE) {
                 LOGGER.warn(String.format("The closing price '%s' of '%s' is an invalid number. Skipped this record.",
-                        Apps.getValueAsString(td, CLOSING_PRICE), bondName));
+                        Apps.getValueAsString(td, CLOSING_PRICE), name));
                 continue;
             } else if (closingPrice >= thrshd) {
                 LOGGER.warn(String.format("The closing price '%s' of '%s' >= user-defined threshold '%s'. Skipped this record.",
-                        closingPrice, bondName, thrshd));
+                        closingPrice, name, thrshd));
                 continue;
             }
 
             Bond b = new Bond();
-            b.setBondId(bondId); // eg. 12581
-            b.setBondName(bondName); // eg. 其祥一KY
+            b.setId(id); // eg. 12581
+            b.setName(name); // eg. 其祥一KY
 //            b.setTime(Apps.getValueAsString(td, TIME)); // eg. 10:12
             b.setClosingPrice(closingPrice); // eg. 108.5
 //            b.setBidPrice(Apps.getValueAsFloat(td, BID_PRICE)); // eg. 107.6
@@ -196,7 +198,7 @@ public class App {
 //            b.setDayLow(Apps.getValueAsFloat(td, DAY_LOW)); // eg. 108.5
             b.setPresentDate(new Date()); // eg. 2017/02/28
 
-            bonds.put(bondId, b);
+            bonds.put(id, b);
         }
 
         LOGGER.info("Processing daily bonds finished.\n\n");
@@ -320,7 +322,7 @@ public class App {
             }
 
             Bond idxB = bonds.get(idxBondId);
-            idxB.setCash(cashTotal * 1000000L);
+            idxB.setCash(cashTotal);
         }
 
         LOGGER.info("Processing url of cash finished.\n");
@@ -337,26 +339,26 @@ public class App {
         String companyCode = csvRecord.get(0).trim();
         if (companyCode.isEmpty()) return;
 
-        String bondId = csvRecord.get(2).trim(); // eg. 12581 or 49581E
+        String id = csvRecord.get(2).trim(); // eg. 12581 or 49581E
 
-        if (bondId.isEmpty()) {
-            LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV is empty.", bondId, companyCode));
+        if (id.isEmpty()) {
+            LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV is empty.", id, companyCode));
 
-        } else if (!bonds.containsKey(bondId)) {
-            LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV cannot be found from the website of daily bonds.",
-                    bondId, companyCode));
+        } else if (!bonds.containsKey(id)) {
+            LOGGER.warn(String.format("Bond ID '%s' of company code '%s' in the CSV cannot be found from the website of daily bonds.", id, companyCode));
 
         } else {
-            LOGGER.debug(String.format("Bond ID '%s' of company code '%s' in the CSV was found from the website of daily bonds.",
-                    bondId, companyCode));
+            LOGGER.debug(String.format("Bond ID '%s' of company code '%s' in the CSV was found from the website of daily bonds.", id, companyCode));
 
-            Bond idxB = bonds.get(bondId);
+            Bond idxB = bonds.get(id);
             SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
 //                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
             idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
-            idxB.setAmount(Long.parseLong(csvRecord.get(8)));
-            idxB.setBalance(Long.parseLong(csvRecord.get(9)));
-//                idxB.setCouponRate(Float.parseFloat(csvRecord.get(10)));
+            final int amount = (int) (Long.parseLong(csvRecord.get(8)) / 1000000L);
+            final int balance = (int) (Long.parseLong(csvRecord.get(9)) / 1000000L);
+            idxB.setAmount(amount);
+            idxB.setBalance(balance);
+            idxB.setBalanceRatio((float) balance / (float) amount * 100f);
             if (csvRecord.get(30).trim().equals("0") && idxB.getDueDate() != null) {
                 idxB.setPutRightDate(idxB.getDueDate());
 
@@ -364,11 +366,17 @@ public class App {
                 idxB.setPutRightDate(Apps.formatDate(csvRecord.get(30), formatter));
             }
 
-            if (idxB.getPutRightDate().getTime() - idxB.getPresentDate().getTime() >= 0) {
+            final int daysToPutRightDate = (int) TimeUnit.DAYS.convert(idxB.getPutRightDate().getTime() - idxB.getPresentDate().getTime(), TimeUnit.MILLISECONDS);
+            idxB.setDaysToPutRightDate(daysToPutRightDate);
+
+            if (daysToPutRightDate >= 0) {
                 idxB.setPutRightPrice(Math.max(Float.parseFloat(csvRecord.get(31)), returnPrice));
             } else {
                 idxB.setPutRightPrice(returnPrice);
             }
+
+            final int daysToDueDate = (int) TimeUnit.DAYS.convert(idxB.getDueDate().getTime() - idxB.getPresentDate().getTime(), TimeUnit.MILLISECONDS);
+            idxB.setDaysToDueDate(daysToDueDate);
         }
     }
 

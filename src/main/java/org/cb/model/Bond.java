@@ -20,37 +20,32 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cb.util.Apps;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import static org.cb.constant.ConstVar.DAYS_YEAR;
 
 public class Bond {
     private static final Logger LOGGER = LogManager.getLogger(Bond.class);
+    private static final DecimalFormat DF2 = new DecimalFormat(".##");
 
     // daily info
-    String bondId;
-    String bondName;
-    //    String time;
+    String id;
+    String name;
     float closingPrice;
-    //    float bidPrice;
-//    float offerPrice;
-//    String dailyPricing;
-//    int boardLot;
     float ydayClosingPrice;
-//    float openingPrice;
-//    float dayHigh;
-//    float dayLow;
     Date presentDate;
 
 
     // published info
     Date putRightDate;
     Date dueDate;
-    //    Date issuedDate;
-    long amount;
-    long balance;
-//    float couponRate;
+    int amount; // in 10^6
+    int balance; // in 10^6
+    float balanceRatio;
     float putRightPrice;
+    int daysToPutRightDate;
+    int daysToDueDate;
 
     // calculated values
     float roi;
@@ -58,22 +53,22 @@ public class Bond {
     float earlyOutPrice;
 
     // profile
-    long cash;
+    int cash; // in 10^6
 
     public String getBondId() {
-        return bondId;
+        return id;
     }
 
-    public void setBondId(String bondId) {
-        this.bondId = bondId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getBondName() {
-        return bondName;
+        return name;
     }
 
-    public void setBondName(String bondName) {
-        this.bondName = bondName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public float getClosingPrice() {
@@ -116,6 +111,22 @@ public class Bond {
         this.putRightDate = putRightDate;
     }
 
+    public int getDaysToPutRightDate() {
+        return daysToPutRightDate;
+    }
+
+    public void setDaysToPutRightDate(int daysToPutRightDate) {
+        this.daysToPutRightDate = daysToPutRightDate;
+    }
+
+    public int getDaysToDueDate() {
+        return daysToDueDate;
+    }
+
+    public void setDaysToDueDate(int daysToDueDate) {
+        this.daysToDueDate = daysToDueDate;
+    }
+
     public float getPutRightPrice() {
         return putRightPrice;
     }
@@ -128,7 +139,7 @@ public class Bond {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
@@ -136,7 +147,7 @@ public class Bond {
         return balance;
     }
 
-    public void setBalance(long balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 
@@ -144,8 +155,16 @@ public class Bond {
         return cash;
     }
 
-    public void setCash(long cash) {
+    public void setCash(int cash) {
         this.cash = cash;
+    }
+
+    public float getBalanceRatio() {
+        return balanceRatio;
+    }
+
+    public void setBalanceRatio(float balanceRatio) {
+        this.balanceRatio = balanceRatio;
     }
 
     /**
@@ -208,11 +227,14 @@ public class Bond {
         return  "代碼\t" +
                 "名稱\t" +
                 "成交價\t" +
-                "今日日期\t" +
+                "今天日期\t" +
                 "賣回權日期\t" +
+                "執行賣回權剩餘天數\t" +
                 "到期日期\t" +
+                "到期日剩餘天數\t" +
                 "發行總額\t" +
                 "目前餘額\t" +
+                "在外流通餘額比例 (%)\t" +
                 "賣回權價格\t" +
                 "報酬率\t" +
                 "年化報酬率\t" +
@@ -222,18 +244,21 @@ public class Bond {
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-                bondId,
-                bondName,
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                id,
+                name,
                 closingPrice,
                 Apps.printDate(presentDate),
                 Apps.printDate(putRightDate),
+                daysToPutRightDate,
                 Apps.printDate(dueDate),
+                daysToDueDate,
                 amount,
                 balance,
+                DF2.format(balanceRatio),
                 putRightPrice,
-                roi,
-                annualizedReturn,
+                DF2.format(roi),
+                DF2.format(annualizedReturn),
                 earlyOutPrice,
                 cash
         );
