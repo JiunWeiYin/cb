@@ -309,6 +309,7 @@ public class App {
             int idxRecord = Apps.indexOfRecord(tr, TD);
             LOGGER.debug(String.format("The first index of <%s> is %s.", TD, idxRecord));
 
+            Bond idxB = bonds.get(idxBondId);
             int cashTotal = 0;
             for (int i = idxRecord; i < tr.size(); i++) {
                 Elements td = tr.get(i).select(TD);
@@ -319,9 +320,12 @@ public class App {
                     cashTotal += Apps.getValueAsInt(td, 1);
                     LOGGER.debug(String.format("cashTotal: %s", cashTotal));
                 }
+
+                if (rowTypeVal.endsWith(CASH_2)) {
+                    idxB.setAccountsReceivable(Apps.getValueAsInt(td, 1));
+                }
             }
 
-            Bond idxB = bonds.get(idxBondId);
             idxB.setCash(cashTotal);
         }
 

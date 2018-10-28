@@ -159,9 +159,9 @@ public class Apps {
     /**
      * Gets value as a int format.
      *
-     * @return float
+     * @return int
      */
-    public static float getValueAsInt(Elements elements, int index) {
+    public static int getValueAsInt(Elements elements, int index) {
         String val;
         try {
             val = elements.get(index).text().trim();

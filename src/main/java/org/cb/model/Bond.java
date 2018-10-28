@@ -53,6 +53,7 @@ public class Bond {
     float earlyOutPrice;
 
     // profile
+    int accountsReceivable; // in 10^6
     int cash; // in 10^6
 
     public String getBondId() {
@@ -151,6 +152,14 @@ public class Bond {
         this.balance = balance;
     }
 
+    public int getAccountsReceivable() {
+        return accountsReceivable;
+    }
+
+    public void setAccountsReceivable(int accountsReceivable) {
+        this.accountsReceivable = accountsReceivable;
+    }
+
     public long getCash() {
         return cash;
     }
@@ -232,19 +241,20 @@ public class Bond {
                 "執行賣回權剩餘天數\t" +
                 "到期日期\t" +
                 "到期日剩餘天數\t" +
-                "發行總額\t" +
-                "目前餘額\t" +
+                "發行總額 (M)\t" +
+                "目前餘額 (M)\t" +
                 "在外流通餘額比例 (%)\t" +
                 "賣回權價格\t" +
-                "報酬率\t" +
-                "年化報酬率\t" +
+                "報酬率 (%)\t" +
+                "年化報酬率 (%)\t" +
                 "提早獲利價格\t" +
-                "公司現金\n";
+                "應收帳款 (M)\t" +
+                "公司現金 (M)\n";
     }
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                 id,
                 name,
                 closingPrice,
@@ -260,6 +270,7 @@ public class Bond {
                 DF2.format(roi),
                 DF2.format(annualizedReturn),
                 earlyOutPrice,
+                accountsReceivable,
                 cash
         );
     }
