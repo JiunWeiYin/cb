@@ -36,7 +36,6 @@ public class Bond {
     float ydayClosingPrice;
     Date presentDate;
 
-
     // published info
     Date putRightDate;
     Date dueDate;
@@ -55,6 +54,11 @@ public class Bond {
     // profile
     int accountsReceivable; // in 10^6
     int cash; // in 10^6
+
+    // stock
+    float priceIssuedDate;
+    float priceYesterday;
+    float netAssetValue;
 
     public String getBondId() {
         return id;
@@ -176,6 +180,30 @@ public class Bond {
         this.balanceRatio = balanceRatio;
     }
 
+    public float getPriceIssuedDate() {
+        return priceIssuedDate;
+    }
+
+    public void setPriceIssuedDate(float priceIssuedDate) {
+        this.priceIssuedDate = priceIssuedDate;
+    }
+
+    public float getPriceYesterday() {
+        return priceYesterday;
+    }
+
+    public void setPriceYesterday(float priceYesterday) {
+        this.priceYesterday = priceYesterday;
+    }
+
+    public float getNetAssetValue() {
+        return netAssetValue;
+    }
+
+    public void setNetAssetValue(float netAssetValue) {
+        this.netAssetValue = netAssetValue;
+    }
+
     /**
      * Get ROI (Return Of Investment).
      *
@@ -236,6 +264,8 @@ public class Bond {
         return  "代碼\t" +
                 "名稱\t" +
                 "成交價\t" +
+                "昨日股票收盤價\t" +
+                "每股淨值(元)\t" +
                 "今天日期\t" +
                 "賣回權日期\t" +
                 "執行賣回權剩餘天數\t" +
@@ -254,10 +284,12 @@ public class Bond {
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                 id,
                 name,
                 closingPrice,
+                priceYesterday,
+                netAssetValue,
                 Apps.printDate(presentDate),
                 Apps.printDate(putRightDate),
                 daysToPutRightDate,

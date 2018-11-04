@@ -143,6 +143,16 @@ public class Apps {
     }
 
     /**
+     * Gets value as a float format.
+     *
+     * @return float
+     */
+    public static float getValueAsFloat(Elements elements, int index) {
+        String val = elements.get(index).text();
+        return elements.get(index).text().equals(PLACEHOLDER) ? Float.MIN_VALUE : Float.parseFloat(val);
+    }
+
+    /**
      * Gets value as an int format.
      *
      * @return int

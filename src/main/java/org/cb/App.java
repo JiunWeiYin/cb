@@ -78,6 +78,11 @@ public class App {
             LOGGER.info(String.format("url of cash: %s", urlCash));
         }
 
+        String urlProfile = config.getUrlProfile();
+        if (urlProfile != null) {
+            LOGGER.info(String.format("url of urlProfile: %s", urlProfile));
+        }
+
         Map<String, Bond> bonds = new HashMap<>();
 
         processDailyBond(urlBondDaily, bonds, thrshd);
@@ -88,6 +93,8 @@ public class App {
 
         calculateValues(bonds, fee, tax);
 
+        processProfile(urlProfile, bonds);
+
         printResults(bonds, config.getOutputFilePath());
 
         LOGGER.info("This program was running successfully.");
@@ -95,6 +102,8 @@ public class App {
 
 
     private static void processDailyBond(String urlBondDaily, Map<String, Bond> bonds, float thrshd) throws Exception {
+
+        LOGGER.info("===== Processing daily bond info ...... =====");
 
         Connection conn = Apps.getConnection(urlBondDaily, USER_AGENT, REFERRER, TIME_OUT);
         if (conn != null) {
@@ -201,11 +210,12 @@ public class App {
             bonds.put(id, b);
         }
 
-        LOGGER.info("Processing daily bonds finished.\n\n");
+        LOGGER.info("===== Processing daily bonds finished =====\n\n");
     }
 
     private static void processPublishedBond(String urlBondPublished, Map<String, Bond> bonds, float returnPrice) throws Exception {
 
+        LOGGER.info("===== Processing published bond info ...... =====");
         LOGGER.info(String.format("Verifying the connection: %s", urlBondPublished));
         CSVParser parser = Apps.readAsCSVParser(urlBondPublished);
         LOGGER.info("The connection has been established.");
@@ -236,10 +246,13 @@ public class App {
             extractCSVRecord(bonds, fstRd, returnPrice);
         }
 
-        LOGGER.info("Processing published bonds finished.\n\n");
+        LOGGER.info("===== Processing published bonds finished =====\n\n");
     }
 
     private static void processCash(String url, Map<String, Bond> bonds) throws Exception {
+
+        LOGGER.info("===== Processing cash info ...... =====");
+
         if (bonds.isEmpty()) {
             LOGGER.warn("Since there is no bonds, skip processing cash");
             return;
@@ -329,7 +342,7 @@ public class App {
             idxB.setCash(cashTotal);
         }
 
-        LOGGER.info("Processing url of cash finished.\n");
+        LOGGER.info("===== Processing url of cash finished =====\n\n");
     }
 
     // check if the size of records and header is identical
@@ -338,6 +351,7 @@ public class App {
     }
 
     private static void extractCSVRecord(Map<String, Bond> bonds, CSVRecord csvRecord, float returnPrice) throws Exception {
+
         LOGGER.debug(csvRecord.toString());
 
         String companyCode = csvRecord.get(0).trim();
@@ -384,7 +398,106 @@ public class App {
         }
     }
 
+    private static void processProfile(String url, Map<String, Bond>  bonds) throws Exception {
+
+        LOGGER.info("===== Getting profile info ...... =====");
+
+        if (bonds.isEmpty()) {
+            LOGGER.warn("Since there is no bonds, skip processing cash");
+            return;
+        }
+
+        for(String idxBondId : bonds.keySet()) {
+            LOGGER.debug(String.format("idxBondId: %s", idxBondId));
+
+            String formattedUrl = String.format(url, idxBondId.substring(0, 4));
+            LOGGER.debug(String.format("formattedUrl: %s", formattedUrl));
+
+            Connection conn = Apps.getConnection(formattedUrl, USER_AGENT, REFERRER, TIME_OUT);
+            if (conn != null) {
+                LOGGER.info(String.format("Verifying the connection: %s", formattedUrl));
+            }
+            conn.timeout(60000);
+
+            // execute connection
+            Connection.Response resp = conn.execute();
+            if (resp != null) {
+                LOGGER.info("The connection has been established.");
+            }
+
+            // get connection response status code
+            if (resp.statusCode() != 200) {
+                LOGGER.error(String.format("The connection response status code is %s. " +
+                        "Please check if the internet is working.", resp.statusCode()));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("The connection response status code is %s.", resp.statusCode()));
+
+            // convert HTML to doc
+            Document doc = conn.get();
+            LOGGER.debug("The HTML has been loaded as a Document object.");
+
+            // select all <table>
+            Elements tables = doc.select(TABLE);
+            if (tables.size() <= 0) {
+                LOGGER.error(String.format("<%s> was not found.", TABLE));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got all <%s>.", TABLE));
+
+            // get a specific <table>
+            Element table = Apps.searchTable(tables, CLASS, T01);
+            if (table == null) {
+                LOGGER.error(String.format("<%s %s=%s> was not found.", TABLE, CLASS, T01));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got the <%s %s=%s>.", TABLE, CLASS, T01));
+
+            // get all <tr>
+            Elements tr = table.select(TR);
+            if (tr.isEmpty()) {
+                LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TR, formattedUrl));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got the <%s>.", TR));
+
+            // check if <td> is present
+            if (tr.select(TD).isEmpty()) {
+                LOGGER.error(String.format("<%s> was not found. Please check the HTML structure in '%s'.", TD, formattedUrl));
+                throw new IllegalArgumentException();
+            }
+            LOGGER.debug(String.format("Got the <%s>.", TD));
+
+            // get the first index of <td>
+            int idxRecord = Apps.indexOfRecord(tr, TD);
+            LOGGER.debug(String.format("The first index of <%s> is %s.", TD, idxRecord));
+
+            Bond idxB = bonds.get(idxBondId);
+            for (int i = idxRecord; i < tr.size(); i++) {
+                Elements td = tr.get(i).select(TD);
+
+                String rowTypeVal = Apps.getValueAsString(td, 0);
+                if (rowTypeVal.equals("開盤價")) {
+                    LOGGER.debug(String.format("rowTypeVal: %s", rowTypeVal));
+                    float price = Apps.getValueAsFloat(td, 7); // 收盤價, eg. 75.6
+                    idxB.setPriceYesterday(price);
+                    LOGGER.debug(String.format("昨日收盤價: %s", price));
+
+                } else if (rowTypeVal.equals("今年以來")) {
+                    LOGGER.debug(String.format("rowTypeVal: %s", rowTypeVal));
+                    float netAssetValue = Apps.getValueAsFloat(td, 3); // 每股淨值(元), eg. 32.96
+                    idxB.setNetAssetValue(netAssetValue);
+                    LOGGER.debug(String.format("每股淨值(元): %s", netAssetValue));
+                }
+            }
+        }
+
+        LOGGER.info("===== Processing url of profile finished =====\n\n");
+    }
+
     private static void calculateValues(Map<String, Bond> bonds, float fee, float tax) {
+
+        LOGGER.info("Calculating based on our knowledge ...... =====");
 
         for (String key : bonds.keySet()) {
             Bond b = bonds.get(key);
@@ -402,7 +515,7 @@ public class App {
             }
         }
 
-        LOGGER.info("Calculating processes finished.\n\n");
+        LOGGER.info("===== Calculating processes finished =====\n\n");
     }
 
     private static void printResults(Map<String, Bond> bonds, String outputFilePath) throws Exception {

@@ -32,6 +32,7 @@ public class Configuration {
 
     // profile
     private String urlCash;
+    private String urlProfile;
 
     public String getUrlBondDaily() {
         return urlBondDaily;
@@ -63,6 +64,10 @@ public class Configuration {
 
     public String getUrlCash() {
         return urlCash;
+    }
+
+    public String getUrlProfile() {
+        return urlProfile;
     }
 
     @Override
