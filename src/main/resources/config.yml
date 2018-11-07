@@ -37,14 +37,12 @@ returnPrice: 100.00
 # Example: http://fund.bot.com.tw/z/zc/zcp/zcpa/zcpa0.djhtm?b=Y&a=4804
 urlCash: http://fund.bot.com.tw/z/zc/zcp/zcpa/zcpa0.djhtm?b=Y&a=%s
 
-
 # url of close price, 每股淨值
 # Example: http://fund.bot.com.tw/Z/ZC/ZCA/ZCA_6803.DJHTM
 urlProfile: http://fund.bot.com.tw/Z/ZC/ZCA/ZCA_%s.DJHTM
 
-
-
-
-
+# url of price
+# Example: http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=20180301&stockNo=2912
+urlTsePrice: http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s01&stockNo=%s
 
 

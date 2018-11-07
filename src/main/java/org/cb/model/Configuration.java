@@ -21,7 +21,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Configuration {
 
-
     private String urlBondDaily;
     private String urlBondPublished;
     private String outputFilePath;
@@ -33,6 +32,9 @@ public class Configuration {
     // profile
     private String urlCash;
     private String urlProfile;
+
+    // history price
+    private String urlTsePrice;
 
     public String getUrlBondDaily() {
         return urlBondDaily;
@@ -68,6 +70,10 @@ public class Configuration {
 
     public String getUrlProfile() {
         return urlProfile;
+    }
+
+    public String getUrlTsePrice() {
+        return urlTsePrice;
     }
 
     @Override

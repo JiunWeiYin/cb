@@ -15,10 +15,13 @@
 
 package org.cb;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cb.model.Firm;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,10 +30,9 @@ import org.cb.model.Bond;
 import org.cb.model.Configuration;
 import org.cb.util.Apps;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -83,6 +85,13 @@ public class App {
             LOGGER.info(String.format("url of urlProfile: %s", urlProfile));
         }
 
+        String urlTsePrice = config.getUrlTsePrice();
+        LOGGER.info(String.format("url of TSE price: %s", urlTsePrice));
+
+
+
+
+
         Map<String, Bond> bonds = new HashMap<>();
 
         processDailyBond(urlBondDaily, bonds, thrshd);
@@ -94,6 +103,8 @@ public class App {
         calculateValues(bonds, fee, tax);
 
         processProfile(urlProfile, bonds);
+
+        processTsePrice(urlTsePrice, bonds);
 
         printResults(bonds, config.getOutputFilePath());
 
@@ -494,6 +505,49 @@ public class App {
 
         LOGGER.info("===== Processing url of profile finished =====\n\n");
     }
+
+    private static void processTsePrice(String url, Map<String, Bond>  bonds) throws Exception {
+
+        for (String id : bonds.keySet()) {
+
+                Date date = bonds.get(id).getPutRightDate(); // todo: test only
+                final String formattedUrl = String.format(url, date, id);
+                LOGGER.info(String.format("formattedUrl: %s", formattedUrl));
+
+//                    Thread.sleep(elapsedTime);
+
+                URL urlFinal = new URL(formattedUrl);
+                HttpURLConnection con = (HttpURLConnection) urlFinal.openConnection();
+                con.setRequestMethod("GET");
+//                    con.setConnectTimeout(connTimeout);
+//                    con.setReadTimeout(readTimeout);
+                int resCode = con.getResponseCode();
+
+                if (resCode != 200) {
+                    String resMsg = con.getResponseMessage();
+                    LOGGER.error(String.format("response code: %s", resCode));
+                    LOGGER.error(String.format("response message: %s", resMsg));
+
+                    continue;
+                }
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+                String inputLine;
+                StringBuilder content = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+                in.close();
+
+                Gson gson = new GsonBuilder().setDateFormat("yyyyMMdd").create();
+                Firm firm = gson.fromJson(content.toString(), Firm.class);
+                LOGGER.debug(String.format("firm: %s", firm));
+
+                List<List<String>> data = firm.getData();
+                LOGGER.debug(String.format("data: %s", data));
+        }
+    }
+
 
     private static void calculateValues(Map<String, Bond> bonds, float fee, float tax) {
 
