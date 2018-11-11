@@ -43,6 +43,6 @@ urlProfile: http://fund.bot.com.tw/Z/ZC/ZCA/ZCA_%s.DJHTM
 
 # url of price
 # Example: http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=20180301&stockNo=2912
-urlTsePrice: http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s01&stockNo=%s
+urlTsePrice: http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s
 
 

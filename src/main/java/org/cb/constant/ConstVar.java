@@ -50,7 +50,8 @@ public class ConstVar {
     public static final String UTF_8 = "UTF-8";
 
     public static final String FORMATTER = "yyyyMMdd";
-    public static final String MY_FORMATTER = "yyyy/MM/dd";
+    public static final String FORMATTER2 = "yyyy/MM/dd";
+    public static final String FORMATTER3 = "/MM/dd";
     public static final int DAYS_YEAR = 365;
 
     // profile

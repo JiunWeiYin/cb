@@ -21,6 +21,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cb.constant.ConstVar;
 import org.cb.model.Firm;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
@@ -381,7 +382,7 @@ public class App {
 
             Bond idxB = bonds.get(id);
             SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER);
-//                idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
+            idxB.setIssuedDate(Apps.formatDate(csvRecord.get(6), formatter));
             idxB.setDueDate(Apps.formatDate(csvRecord.get(7), formatter));
             final int amount = (int) (Long.parseLong(csvRecord.get(8)) / 1000000L);
             final int balance = (int) (Long.parseLong(csvRecord.get(9)) / 1000000L);
@@ -507,44 +508,64 @@ public class App {
     }
 
     private static void processTsePrice(String url, Map<String, Bond>  bonds) throws Exception {
+        SimpleDateFormat formatter = new SimpleDateFormat(ConstVar.FORMATTER); // eg. 2018/02/06
+        SimpleDateFormat formatter3 = new SimpleDateFormat(ConstVar.FORMATTER3); // eg. /02/06
 
         for (String id : bonds.keySet()) {
+            final Bond idxB = bonds.get(id);
+            final String issuedDate =  formatter.format(idxB.getIssuedDate());
+            final String issuedDate3 =  formatter3.format(idxB.getIssuedDate());
+            final String firmId = id.substring(0,4);
+            final String formattedUrl = String.format(url, issuedDate, firmId);
+            LOGGER.info(String.format("formattedUrl: %s", formattedUrl));
 
-                Date date = bonds.get(id).getPutRightDate(); // todo: test only
-                final String formattedUrl = String.format(url, date, id);
-                LOGGER.info(String.format("formattedUrl: %s", formattedUrl));
+            Thread.sleep(5000);
 
-//                    Thread.sleep(elapsedTime);
+            URL urlFinal = new URL(formattedUrl);
+            HttpURLConnection con = (HttpURLConnection) urlFinal.openConnection();
+            con.setRequestMethod("GET");
+            con.setConnectTimeout(60000);
+            con.setReadTimeout(60000);
+            int resCode = con.getResponseCode();
 
-                URL urlFinal = new URL(formattedUrl);
-                HttpURLConnection con = (HttpURLConnection) urlFinal.openConnection();
-                con.setRequestMethod("GET");
-//                    con.setConnectTimeout(connTimeout);
-//                    con.setReadTimeout(readTimeout);
-                int resCode = con.getResponseCode();
+            if (resCode != 200) {
+                String resMsg = con.getResponseMessage();
+                LOGGER.error(String.format("response code: %s", resCode));
+                LOGGER.error(String.format("response message: %s", resMsg));
 
-                if (resCode != 200) {
-                    String resMsg = con.getResponseMessage();
-                    LOGGER.error(String.format("response code: %s", resCode));
-                    LOGGER.error(String.format("response message: %s", resMsg));
+                continue;
+            }
 
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+
+            Gson gson = new GsonBuilder().setDateFormat("yyyyMMdd").create();
+            Firm firm = gson.fromJson(content.toString(), Firm.class);
+            LOGGER.info(String.format("firm: %s", firm));
+
+            List<List<String>> data = firm.getData();
+            LOGGER.debug(String.format("data: %s", data));
+            if (data == null || data.size() == 0) {
+                continue;
+            }
+
+            for (List<String> idxData : data) {
+                if (idxData.size() < 7) {
                     continue;
                 }
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
-                String inputLine;
-                StringBuilder content = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
+                final String date = idxData.get(0); // eg. 107/02/06
+                if (date.endsWith(issuedDate3)) {
+                    final float closePrice = Float.valueOf(idxData.get(6));
+                    LOGGER.info(String.format("closePrice: %s", closePrice));
+                    idxB.setPriceIssuedDate(closePrice);
                 }
-                in.close();
-
-                Gson gson = new GsonBuilder().setDateFormat("yyyyMMdd").create();
-                Firm firm = gson.fromJson(content.toString(), Firm.class);
-                LOGGER.debug(String.format("firm: %s", firm));
-
-                List<List<String>> data = firm.getData();
-                LOGGER.debug(String.format("data: %s", data));
+            }
         }
     }
 

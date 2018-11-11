@@ -38,6 +38,7 @@ public class Bond {
 
     // published info
     Date putRightDate;
+    Date issuedDate;
     Date dueDate;
     int amount; // in 10^6
     int balance; // in 10^6
@@ -98,6 +99,14 @@ public class Bond {
 
     public void setPresentDate(Date presentDate) {
         this.presentDate = presentDate;
+    }
+
+    public Date getIssuedDate() {
+        return issuedDate;
+    }
+
+    public void setIssuedDate(Date issuedDate) {
+        this.issuedDate = issuedDate;
     }
 
     public Date getDueDate() {
@@ -269,6 +278,7 @@ public class Bond {
                 "今天日期\t" +
                 "賣回權日期\t" +
                 "執行賣回權剩餘天數\t" +
+                "發行日期\t" +
                 "到期日期\t" +
                 "到期日剩餘天數\t" +
                 "發行總額 (M)\t" +
@@ -284,7 +294,7 @@ public class Bond {
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                 id,
                 name,
                 closingPrice,
@@ -293,6 +303,7 @@ public class Bond {
                 Apps.printDate(presentDate),
                 Apps.printDate(putRightDate),
                 daysToPutRightDate,
+                Apps.printDate(issuedDate),
                 Apps.printDate(dueDate),
                 daysToDueDate,
                 amount,
