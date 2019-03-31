@@ -26,7 +26,7 @@ public class ConstVar {
     public static final String TH = "th";
     public static final String TD = "td";
     public static final String YUI_TEXT_LEFT = "yui-text-left";
-    public static final String PLACEHOLDER = "－";
+    public static final String PLACEHOLDER = "-";
 
     public static final String CLASS = "class";
     public static final String BGCOLOR = "bgcolor";
