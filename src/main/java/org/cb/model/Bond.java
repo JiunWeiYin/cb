@@ -274,6 +274,7 @@ public class Bond {
                 "名稱\t" +
                 "成交價\t" +
                 "昨日股票收盤價\t" +
+                "發行股票收盤價\t" +
                 "每股淨值(元)\t" +
                 "今天日期\t" +
                 "賣回權日期\t" +
@@ -294,11 +295,12 @@ public class Bond {
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+        return String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                 id,
                 name,
                 closingPrice,
                 priceYesterday,
+                priceIssuedDate,
                 netAssetValue,
                 Apps.printDate(presentDate),
                 Apps.printDate(putRightDate),

@@ -41,8 +41,13 @@ urlCash: http://fund.bot.com.tw/z/zc/zcp/zcpa/zcpa0.djhtm?b=Y&a=%s
 # Example: http://fund.bot.com.tw/Z/ZC/ZCA/ZCA_6803.DJHTM
 urlProfile: http://fund.bot.com.tw/Z/ZC/ZCA/ZCA_%s.DJHTM
 
-# url of price
+# url of TSE price
 # Example: http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=20180301&stockNo=2912
 urlTsePrice: http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s
+
+
+# url of OTC price
+# Example:
+urlOtcPrice: http://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&o=htm&d=107/05/29&se=EW&s=0,asc,0
 
 
