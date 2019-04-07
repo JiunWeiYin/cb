@@ -514,7 +514,7 @@ public class App {
         try {
             for (String id : bonds.keySet()) {
                 final Bond idxB = bonds.get(id);
-                System.out.println(idxB);
+//                System.out.println(idxB);
                 final String issuedDate = formatter.format(idxB.getIssuedDate());
                 final String issuedDate3 = formatter3.format(idxB.getIssuedDate());
                 final String firmId = id.substring(0, 4);
@@ -573,7 +573,6 @@ public class App {
             LOGGER.warn(e);
         }
     }
-
 
     private static void calculateValues(Map<String, Bond> bonds, float fee, float tax) {
 

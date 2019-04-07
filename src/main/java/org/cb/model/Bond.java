@@ -57,7 +57,7 @@ public class Bond {
     int cash; // in 10^6
 
     // stock
-    float priceIssuedDate;
+    Float priceIssuedDate = null;
     float priceYesterday;
     float netAssetValue;
 
