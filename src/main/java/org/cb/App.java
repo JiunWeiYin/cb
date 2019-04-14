@@ -516,8 +516,8 @@ public class App {
         final SimpleDateFormat formatter = new SimpleDateFormat(ConstVar.FORMATTER); // eg. 2018/02/06
         final SimpleDateFormat formatter3 = new SimpleDateFormat(ConstVar.FORMATTER3); // eg. /02/06
 
-        try {
-            for (String id : bonds.keySet()) {
+        for (String id : bonds.keySet()) {
+            try {
                 final Bond idxB = bonds.get(id); LOGGER.debug("idxB: {}", idxB);
                 final String issuedDate = formatter.format(idxB.getIssuedDate());
                 final String issuedDate3 = formatter3.format(idxB.getIssuedDate());
@@ -557,20 +557,20 @@ public class App {
                     continue;
                 }
 
-                for (List<String> idxData : data) {
-                    if (idxData.size() < 7) {
-                        continue;
-                    }
+                    for (List<String> idxData : data) {
+                        if (idxData.size() < 7) {
+                            continue;
+                        }
 
-                    final String date = idxData.get(0); // eg. 107/02/06
-                    if (date.endsWith(issuedDate3)) {
-                        final Double closePrice = Double.valueOf(idxData.get(6)); LOGGER.debug("closePrice: {}", closePrice);
-                        idxB.setPriceIssuedDate(closePrice);
+                        final String date = idxData.get(0); // eg. 107/02/06
+                        if (date.endsWith(issuedDate3)) {
+                            final Double closePrice = Double.valueOf(idxData.get(6)); LOGGER.debug("closePrice: {}", closePrice);
+                            idxB.setPriceIssuedDate(closePrice);
+                        }
                     }
-                }
+                } catch (Exception e) {
+                LOGGER.warn(e);
             }
-        } catch (Exception e) {
-            LOGGER.warn(e);
         }
 
         LOGGER.info("===== Processing url of TSE finished =====\n\n");
@@ -578,16 +578,22 @@ public class App {
 
     private static void processOtcPrice(String url, Map<String, Bond> bonds) throws Exception {
 
+        LOGGER.info("===== Getting OTC info ...... =====");
+        LOGGER.debug("bonds: {}", bonds);
+        LOGGER.debug("bonds.keySet(): {}", bonds.keySet());
+
         final SimpleDateFormat formatter = new SimpleDateFormat(ConstVar.FORMATTER); // eg. 2018/02/06
 
-        try {
-            for (String bondId : bonds.keySet()) {
+        for (String bondId : bonds.keySet()) {
+
+            try {
+
                 final Bond idxB = bonds.get(bondId); LOGGER.debug("idxB: {}", idxB);
 
                 if (idxB.getIssuedDate() == null || idxB.getPriceIssuedDate() != null) continue;
 
                 final String issuedDate = Apps.convertTWDate(formatter.format(idxB.getIssuedDate())); LOGGER.debug("issuedDate: {}", issuedDate); // eg. 107/02/06
-//                final String issuedDate3 = formatter3.format(idxB.getIssuedDate());
+    //                final String issuedDate3 = formatter3.format(idxB.getIssuedDate());
                 final String firmId = bondId.substring(0, 4);
                 final String formattedUrl = String.format(url, issuedDate);
                 LOGGER.info("formattedUrl: {}", formattedUrl);
@@ -656,10 +662,13 @@ public class App {
                     }
                 }
                 LOGGER.debug("idxB: {}", idxB);
+
+                } catch (Exception e) {
+                LOGGER.warn(e);
             }
-        } catch (Exception e) {
-            LOGGER.warn(e);
         }
+
+        LOGGER.info("===== Processing url of OTC finished =====\n\n");
     }
 
     private static void calculateValues(Map<String, Bond> bonds, float fee, float tax) {
