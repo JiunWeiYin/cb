@@ -34,6 +34,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.cb.constant.ConstVar.*;
@@ -138,7 +139,7 @@ public class Apps {
      * @return float
      */
     public static float getValueAsFloat(Elements elements, String feature) {
-        String val = elements.get(FEATURE.valueOf(feature).ordinal()).text();
+        String val = elements.get(FEATURE.valueOf(feature).ordinal()).text().replace(",","");
         return val.equals(PLACEHOLDER) ? Float.MIN_VALUE : Float.parseFloat(val);
     }
 
@@ -148,7 +149,7 @@ public class Apps {
      * @return float
      */
     public static float getValueAsFloat(Elements elements, int index) {
-        String val = elements.get(index).text();
+        String val = elements.get(index).text().replace(",","");
         return elements.get(index).text().equals(PLACEHOLDER) ? Float.MIN_VALUE : Float.parseFloat(val);
     }
 
@@ -202,12 +203,43 @@ public class Apps {
     }
 
     /**
+     * Gets value as a Double format.
+     *
+     * @return Double
+     */
+    public static Double getValueAsDouble(Elements elements, int index) {
+        final String val = elements.get(index).text().replace(",","");
+        return val.equals(PLACEHOLDER) || val.equals(PLACEHOLDER2) ? null : roundup(Double.parseDouble(val));
+    }
+
+    private static double roundup(double val) {
+        return Math.round(val * 100.0) / 100.0;
+    }
+
+    /**
      * Convert String to Date. eg. 2017/02/28
      *
      * @return Date
      */
     public static Date formatDate(String dateInString, SimpleDateFormat formatter) throws ParseException {
         return formatter.parse(dateInString);
+    }
+
+    public static String convertTWDate(String AD) {
+        SimpleDateFormat df4 = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat df2 = new SimpleDateFormat("/MM/dd");
+        Calendar cal = Calendar.getInstance();
+        String TWDate;
+        try {
+            cal.setTime(df4.parse(AD));
+            cal.add(Calendar.YEAR, - 1911);
+            TWDate = cal.get(Calendar.YEAR) + df2.format(cal.getTime());
+            return TWDate;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

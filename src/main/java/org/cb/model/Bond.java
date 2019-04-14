@@ -57,7 +57,7 @@ public class Bond {
     int cash; // in 10^6
 
     // stock
-    Float priceIssuedDate = null;
+    Double priceIssuedDate = null;
     float priceYesterday;
     float netAssetValue;
 
@@ -189,11 +189,11 @@ public class Bond {
         this.balanceRatio = balanceRatio;
     }
 
-    public float getPriceIssuedDate() {
+    public Double getPriceIssuedDate() {
         return priceIssuedDate;
     }
 
-    public void setPriceIssuedDate(float priceIssuedDate) {
+    public void setPriceIssuedDate(Double priceIssuedDate) {
         this.priceIssuedDate = priceIssuedDate;
     }
 

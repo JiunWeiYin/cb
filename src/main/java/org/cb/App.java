@@ -89,9 +89,8 @@ public class App {
         String urlTsePrice = config.getUrlTsePrice();
         LOGGER.info(String.format("url of TSE price: %s", urlTsePrice));
 
-
-
-
+        String urlOtcPrice = config.getUrlOtcPrice();
+        LOGGER.info(String.format("url of OTC price: %s", urlOtcPrice));
 
         Map<String, Bond> bonds = new HashMap<>();
 
@@ -107,11 +106,12 @@ public class App {
 
         processTsePrice(urlTsePrice, bonds);
 
+        processOtcPrice(urlOtcPrice, bonds);
+
         printResults(bonds, config.getOutputFilePath());
 
         LOGGER.info("This program was running successfully.");
     }
-
 
     private static void processDailyBond(String urlBondDaily, Map<String, Bond> bonds, float thrshd) throws Exception {
 
@@ -410,7 +410,7 @@ public class App {
         }
     }
 
-    private static void processProfile(String url, Map<String, Bond>  bonds) throws Exception {
+    private static void processProfile(String url, Map<String, Bond> bonds) throws Exception {
 
         LOGGER.info("===== Getting profile info ...... =====");
 
@@ -507,14 +507,18 @@ public class App {
         LOGGER.info("===== Processing url of profile finished =====\n\n");
     }
 
-    private static void processTsePrice(String url, Map<String, Bond>  bonds) throws Exception {
-        SimpleDateFormat formatter = new SimpleDateFormat(ConstVar.FORMATTER); // eg. 2018/02/06
-        SimpleDateFormat formatter3 = new SimpleDateFormat(ConstVar.FORMATTER3); // eg. /02/06
+    private static void processTsePrice(String url, Map<String, Bond> bonds) {
+
+        LOGGER.info("===== Getting TSE info ...... =====");
+        LOGGER.debug("bonds: {}", bonds);
+        LOGGER.debug("bonds.keySet(): {}", bonds.keySet());
+
+        final SimpleDateFormat formatter = new SimpleDateFormat(ConstVar.FORMATTER); // eg. 2018/02/06
+        final SimpleDateFormat formatter3 = new SimpleDateFormat(ConstVar.FORMATTER3); // eg. /02/06
 
         try {
             for (String id : bonds.keySet()) {
-                final Bond idxB = bonds.get(id);
-//                System.out.println(idxB);
+                final Bond idxB = bonds.get(id); LOGGER.debug("idxB: {}", idxB);
                 final String issuedDate = formatter.format(idxB.getIssuedDate());
                 final String issuedDate3 = formatter3.format(idxB.getIssuedDate());
                 final String firmId = id.substring(0, 4);
@@ -547,11 +551,8 @@ public class App {
                 in.close();
 
                 Gson gson = new GsonBuilder().setDateFormat("yyyyMMdd").create();
-                Firm firm = gson.fromJson(content.toString(), Firm.class);
-                LOGGER.info(String.format("firm: %s", firm));
-
-                List<List<String>> data = firm.getData();
-                LOGGER.debug(String.format("data: %s", data));
+                Firm firm = gson.fromJson(content.toString(), Firm.class); LOGGER.debug("firm: {}", firm);
+                List<List<String>> data = firm.getData(); LOGGER.debug("data: {}", data);
                 if (data == null || data.size() == 0) {
                     continue;
                 }
@@ -563,11 +564,98 @@ public class App {
 
                     final String date = idxData.get(0); // eg. 107/02/06
                     if (date.endsWith(issuedDate3)) {
-                        final float closePrice = Float.valueOf(idxData.get(6));
-                        LOGGER.info(String.format("closePrice: %s", closePrice));
+                        final Double closePrice = Double.valueOf(idxData.get(6)); LOGGER.debug("closePrice: {}", closePrice);
                         idxB.setPriceIssuedDate(closePrice);
                     }
                 }
+            }
+        } catch (Exception e) {
+            LOGGER.warn(e);
+        }
+
+        LOGGER.info("===== Processing url of TSE finished =====\n\n");
+    }
+
+    private static void processOtcPrice(String url, Map<String, Bond> bonds) throws Exception {
+
+        final SimpleDateFormat formatter = new SimpleDateFormat(ConstVar.FORMATTER); // eg. 2018/02/06
+
+        try {
+            for (String bondId : bonds.keySet()) {
+                final Bond idxB = bonds.get(bondId); LOGGER.debug("idxB: {}", idxB);
+
+                if (idxB.getIssuedDate() == null || idxB.getPriceIssuedDate() != null) continue;
+
+                final String issuedDate = Apps.convertTWDate(formatter.format(idxB.getIssuedDate())); LOGGER.debug("issuedDate: {}", issuedDate); // eg. 107/02/06
+//                final String issuedDate3 = formatter3.format(idxB.getIssuedDate());
+                final String firmId = bondId.substring(0, 4);
+                final String formattedUrl = String.format(url, issuedDate);
+                LOGGER.info("formattedUrl: {}", formattedUrl);
+
+                Connection conn = Apps.getConnection(formattedUrl, USER_AGENT, REFERRER, TIME_OUT);
+                if (conn != null) {
+                    LOGGER.debug(String.format("Verifying the connection: %s", formattedUrl));
+                }
+                conn.timeout(10000);
+
+                // execute connection
+                Connection.Response resp = conn.execute();
+                if (resp != null) {
+                    LOGGER.debug("The connection has been established.");
+                }
+
+                // get connection response status code
+                if (resp.statusCode() != 200) {
+                    LOGGER.error(String.format("The connection response status code is %s. " +
+                            "Please check if the internet is working.", resp.statusCode()));
+                    throw new IllegalArgumentException();
+                }
+                LOGGER.debug(String.format("The connection response status code is %s.", resp.statusCode()));
+
+                // convert HTML to doc
+                Document doc = conn.get();
+                LOGGER.debug("The HTML has been loaded as a Document object.");
+
+                // select all <tbody>
+                Elements tbodies = doc.select(TBODY);
+                if (tbodies.size() <= 0) {
+                    LOGGER.warn("<{}> was not found.", TBODY);
+                    return;
+                }
+                LOGGER.debug("Got all <{}>.", TBODY);
+                LOGGER.debug(tbodies);
+
+                // get all <tr>
+                Elements tr = tbodies.select(TR);
+                if (tr.isEmpty()) {
+                    LOGGER.warn("<{}> was not found. Please check the HTML structure in '{}'.", TR, formattedUrl);
+                    return;
+                }
+                LOGGER.debug("Got all <{}>.", TR);
+                LOGGER.debug(tr);
+
+                // check if <td> is present
+                if (tr.select(TD).isEmpty()) {
+                    LOGGER.warn("<{}> was not found. Please check the HTML structure in '{}'.", TD, formattedUrl);
+                    return;
+                }
+                LOGGER.debug("Got the <{}>.", TD); LOGGER.debug(tr.select(TD));
+
+                // get the first index of <td>
+                int idxRecord = Apps.indexOfRecord(tr, TD); LOGGER.debug("The first index of <{}> is {}.", TD, idxRecord);
+
+                for (int i = idxRecord; i < tr.size(); i++) {
+                    Elements td = tr.get(i).select(TD); LOGGER.debug("td: {}", td);
+                    final String recordId = Apps.getValueAsString(td, 0); LOGGER.debug("recordId: {}", recordId);
+                    final Double closePrice = Apps.getValueAsDouble(td, 2); LOGGER.debug("closePrice: {}", closePrice);
+
+                    if (closePrice == null) continue;
+
+                    if (firmId.equals(recordId)) {
+                        idxB.setPriceIssuedDate(closePrice);
+                    }
+                }
+                LOGGER.debug("idxB: {}", idxB);
             }
         } catch (Exception e) {
             LOGGER.warn(e);

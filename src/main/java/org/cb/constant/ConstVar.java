@@ -28,6 +28,7 @@ public class ConstVar {
     public static final String YUI_TEXT_LEFT = "yui-text-left";
     public static final String PLACEHOLDER = "-";
 
+    public static final String PLACEHOLDER2 = "----";
     public static final String CLASS = "class";
     public static final String BGCOLOR = "bgcolor";
     public static final String BGCOLOR_VALUE = "#ffffff";
@@ -53,6 +54,7 @@ public class ConstVar {
     public static final String FORMATTER2 = "yyyy/MM/dd";
     public static final String FORMATTER3 = "/MM/dd";
     public static final int DAYS_YEAR = 365;
+    public static final String TBODY = "tbody";
 
     // profile
     public static final String T01 = "t01";

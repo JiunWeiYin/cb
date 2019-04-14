@@ -35,6 +35,7 @@ public class Configuration {
 
     // history price
     private String urlTsePrice;
+    private String urlOtcPrice;
 
     public String getUrlBondDaily() {
         return urlBondDaily;
@@ -74,6 +75,10 @@ public class Configuration {
 
     public String getUrlTsePrice() {
         return urlTsePrice;
+    }
+
+    public String getUrlOtcPrice() {
+        return urlOtcPrice;
     }
 
     @Override
