@@ -4,17 +4,9 @@
 urlBondDaily: https://tw.stock.yahoo.com/s/list.php?c=%C2d%A4%BD%A5q&rr=0.96324200%201486284133
 
 # url of published bonds
-# Caveat: please check if column order is { 機構代碼=0, 機構名稱=1, 債券代碼=2, 債券種類=3, 債券期=4, 債券別=5, 發行日期=6,
-# 到期日期=7, 發行總額=8, 目前餘額=9, 票面利率=10, 計付息方式=11, 計息次數=12, 付息次數=13, 債券評等機構=14, 債券評等等級=15,
-# 發行公司評等機構=16, 發行公司評等等級=17, 擔保機構評等機構=18, 擔保機構評等等級=19, 掛牌地點=20, 還本FLAG=21, 還本敘述=22,
-# 債券簡稱=23, 掛牌日期=24, 發行期限年=25, 發行期限月=26, 上市櫃否=27, 有無擔保=28, 債券擔保情形 =29, 賣回權日期=30,
-# 賣回權價格=31, 承銷機構=32, 最近餘額變動日=33, 最近餘額變動原因=34, 幣別=35, 募集方式=36, 發行時轉換價格=37, 轉換期間起=38,
-# 迄=39, 受託人=40 }
+# Caveat: please check if column order is { 債券代號=0,債券簡稱=1,發行人=2,發行日期=3,到期日期=4,年期=5,發行總面額=6,發行資料=7 }
 # deprecated
-# urlBondPublished: http://www.tpex.org.tw/storage/bond_publish/ISSBD5.csv
 urlBondPublished: https://www.tpex.org.tw/web/bond/publish/convertible_bond_search/memo_download.php?d=issue.txt
-bondPublishedFileName: convertible_bond_publish.csv
-
 
 # path of output file in CSV format (https://en.wikipedia.org/wiki/Comma-separated_values)
 # Example 1 (Windows): D:\Users\chunpei.cheng\Documents\cb.txt
