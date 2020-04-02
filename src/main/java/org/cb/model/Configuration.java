@@ -23,6 +23,7 @@ public class Configuration {
 
     private String urlBondDaily;
     private String urlBondPublished;
+    private String bondPublishedFileName;
     private String outputFilePath;
     private float fee;
     private float tax;
@@ -43,6 +44,10 @@ public class Configuration {
 
     public String getUrlBondPublished() {
         return urlBondPublished;
+    }
+
+    public String getBondPublishedFileName() {
+        return bondPublishedFileName;
     }
 
     public String getOutputFilePath() {
